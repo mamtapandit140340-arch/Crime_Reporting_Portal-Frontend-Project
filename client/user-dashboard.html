@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../responsive.css">
   <link rel="stylesheet" href="../css/client.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
 
@@ -323,6 +324,7 @@
         <li><a href="anonymous-tip.html">Anonymous Tip</a></li>
         <li><a href="track-report.html">Track Report</a></li>
         <li><a href="user-dashboard.html">Client Dashboard</a></li>
+        <li><a href="about.html">About Us</a></li>
       </ul>
     </div>
 
@@ -371,13 +373,21 @@
     if (nameEl) nameEl.textContent = session.name || 'Citizen';
     if (idEl)   idEl.textContent   = session.userId || 'USER-CLIENT';
 
-    // Retrieve reports belonging strictly to the logged-in user
-    var currentUserId = session.userId;
-    var allReports = safeGetJSON('sc_reports');
+    // Normalize older sessions and migrate only reports with an exact email match.
+    var currentUserId = session.userId || Auth.getUserId();
+    var currentEmail = (session.email || '').trim().toLowerCase();
+    var allReports = typeof migrateReportOwnership === 'function'
+      ? migrateReportOwnership()
+      : safeGetJSON('sc_reports');
 
-    // Filter reports by logged-in user's unique ID
-    currentUserReports = allReports.filter(function (r) {
-      return r.userId === currentUserId;
+    // Match by stable user ID. Email is a safe fallback for older records
+    // only when the stored owner/reporter email exactly matches this session.
+    currentUserReports = allReports.filter(function (report) {
+      if (currentUserId && report.userId === currentUserId) return true;
+      var reportEmails = [report.ownerEmail, report.reporterEmail]
+        .filter(Boolean)
+        .map(function (email) { return email.trim().toLowerCase(); });
+      return !report.userId && currentEmail && reportEmails.indexOf(currentEmail) !== -1;
     });
 
     // Update KPI Summary Counts
@@ -521,8 +531,17 @@
    */
   function showReportDetails(reportId) {
     var allReports = safeGetJSON('sc_reports');
+    var session = Auth.getSession();
+    var sessionId = session && (session.userId || Auth.getUserId());
+    var sessionEmail = session && session.email ? session.email.trim().toLowerCase() : '';
     var report = allReports.find(function (r) {
-      return r.id === reportId || r.reportId === reportId;
+      var sameReport = r.id === reportId || r.reportId === reportId;
+      var reportEmails = [r.ownerEmail, r.reporterEmail]
+        .filter(Boolean)
+        .map(function (email) { return email.trim().toLowerCase(); });
+      var belongsToUser = (sessionId && r.userId === sessionId) ||
+        (!r.userId && sessionEmail && reportEmails.indexOf(sessionEmail) !== -1);
+      return sameReport && belongsToUser;
     });
 
     if (!report) {

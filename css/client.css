@@ -1,11 +1,10 @@
 /* ============================================================
    client.css — Styles for client-facing pages:
-   report-crime.html, anonymous-tip.html,
-   track-report.html, login.html
+   report-crime.html, anonymous-tip.html, track-report.html,
+   login.html and user-dashboard.html (see the last section)
    ============================================================ */
 
 /* ── PAGE HEADER BAR ──────────────────────────────────────── */
-
 .page-header {
   background: var(--primary);
   color: var(--white);
@@ -20,8 +19,9 @@
   margin-bottom: 0.3rem;
 }
 .page-header h1 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 700;
   color: var(--white);
   margin: 0;
 }
@@ -77,8 +77,8 @@
 }
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--primary-mid);
-  box-shadow: 0 0 0 3px rgba(31,58,95,0.12);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgba(31,95,168,0.15);
   outline: none;
 }
 .form-control.is-invalid,
@@ -240,7 +240,7 @@
   background: var(--primary-mid);
 }
 .btn-submit-report {
-  background: var(--accent);
+  background: var(--action);
   border: none;
   color: var(--white);
   border-radius: var(--radius);
@@ -251,7 +251,7 @@
   transition: background-color 0.2s;
 }
 .btn-submit-report:hover {
-  background: var(--accent-hover);
+  background: var(--action-hover);
 }
 
 /* ── REVIEW SUMMARY (step 4) ──────────────────────────────── */
@@ -491,7 +491,7 @@
 
 /* ── LOGIN PAGE ───────────────────────────────────────────── */
 .auth-wrapper {
-  min-height: calc(100vh - 70px);
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -615,387 +615,499 @@
   color: var(--teal-dark);
 }
 
-/* ════════════════════════════════════════════════════════════
-   CLIENT DASHBOARD (user-dashboard.html)
-   ════════════════════════════════════════════════════════════ */
 
-/* Dashboard Topbar / Greeting */
-.dash-banner {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%);
-  color: var(--white);
-  padding: 2.25rem 0 2rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+/* ── LOGIN PAGE EXTRAS ────────────────────────────────────── */
+/* Wrapper that lets the eye (show/hide) button sit inside the password box */
+.pw-wrap {
+  position: relative;
 }
-.dash-banner-inner {
+.pw-wrap .form-control {
+  padding-right: 2.5rem;
+}
+
+/* "or" line and the link to the public Anonymous Tip page */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+.auth-alt-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0.55rem;
+  border: 1.5px solid var(--teal);
+  border-radius: var(--radius);
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+.auth-alt-link:hover {
+  background: var(--teal);
+  color: var(--white);
+  text-decoration: none;
+}
+
+
+/* ── USER DASHBOARD (client/user-dashboard.html) ───────────── */
+
+/* Header band: welcome text on the left, bell + profile menu on the right */
+.dash-header {
+  background: var(--primary);
+  color: var(--white);
+  padding: 1.75rem 0;
+}
+.dash-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   flex-wrap: wrap;
-  gap: 1.25rem;
 }
-.dash-user-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50px;
-  padding: 4px 14px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 0.5rem;
-}
-.dash-user-badge .uid-val {
-  font-family: monospace;
+.dash-welcome h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--white);
+  margin: 0 0 0.25rem;
 }
-.dash-title {
-  font-size: clamp(1.4rem, 2.8vw, 1.9rem);
-  font-weight: 800;
+.dash-welcome p {
   margin: 0;
-  color: #fff;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.8);
 }
-.dash-subtitle {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.75);
-  margin-top: 0.35rem;
-  margin-bottom: 0;
-}
-.dash-topbar-actions {
+.dash-tools {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-/* Notification bell button */
-.btn-notif-bell {
+/* Bell and profile buttons share the same look */
+.dash-icon-btn,
+.dash-profile-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: var(--white);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.dash-icon-btn:hover,
+.dash-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.dash-icon-btn {
   position: relative;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #fff;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  display: inline-flex;
+  font-size: 1.1rem;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.15s;
 }
-.btn-notif-bell:hover {
-  background: rgba(255,255,255,0.22);
-  transform: translateY(-1px);
-  color: #fff;
-}
-.notif-badge-count {
+/* Small number on the bell = unread notifications */
+.dash-bell-dot {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 800;
+  top: -5px;
+  right: -5px;
   min-width: 19px;
   height: 19px;
-  line-height: 19px;
-  text-align: center;
+  padding: 0 5px;
   border-radius: 50px;
-  padding: 0 4px;
-  border: 2px solid var(--primary);
-  display: none;
-}
-.notif-badge-count.show {
-  display: inline-block;
-}
-
-/* KPI Summary Cards Grid */
-.dash-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-top: -1.25rem;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 2;
-}
-.dash-kpi-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.35rem 1.25rem;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.dash-kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-.dash-kpi-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  background: var(--emergency);
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
-  flex-shrink: 0;
 }
-.dash-kpi-icon.blue   { background: #eff6ff; color: #1d4ed8; }
-.dash-kpi-icon.amber  { background: #fef3c7; color: #b45309; }
-.dash-kpi-icon.indigo { background: #e0e7ff; color: #4338ca; }
-.dash-kpi-icon.green  { background: #d1fae5; color: #047857; }
-
-.dash-kpi-body {
-  flex: 1;
-  min-width: 0;
+.dash-bell-dot[hidden] {
+  display: none;
 }
-.dash-kpi-val {
-  font-size: 1.75rem;
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--primary);
-}
-.dash-kpi-label {
-  font-size: 0.8rem;
+.dash-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 50px;
+  padding: 0.3rem 0.9rem 0.3rem 0.3rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--text-muted);
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
-
-/* Quick Action Banner Cards */
-.dash-actions-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-.dash-action-btn-card {
+.dash-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
   color: var(--primary);
-  font-weight: 700;
-  font-size: 0.92rem;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
-}
-.dash-action-btn-card:hover {
-  background: var(--action-tint);
-  border-color: var(--action);
-  color: var(--action);
-  transform: translateY(-1px);
-}
-.dash-action-btn-card i {
-  font-size: 1.35rem;
-}
-
-/* Reports Table Container Card */
-.dash-table-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 2rem;
-}
-.dash-table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1.5px solid var(--border);
-}
-.dash-table-title {
-  font-size: 1.15rem;
   font-weight: 800;
-  color: var(--primary);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.dash-table-title .badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 4px 8px;
-}
-
-/* Table Filters */
-.dash-filter-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.dash-search-input-wrap {
-  position: relative;
-  min-width: 220px;
-  flex: 1;
-}
-.dash-search-input-wrap i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
   font-size: 0.85rem;
-}
-.dash-search-input-wrap input {
-  padding-left: 2rem;
-  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Table element styling */
-.dash-reports-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.88rem;
+/* Dropdown menus (Bootstrap opens and closes them for us) */
+.dash-dropdown {
+  min-width: 240px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 0.5rem 0;
 }
-.dash-reports-table th {
-  background: #f8fafc;
-  color: var(--text-muted);
+.dash-notif-menu {
+  width: 340px;
+  max-width: 92vw;
+}
+.dash-dropdown-title {
+  padding: 0.4rem 1rem 0.5rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.75rem 1rem;
-  border-bottom: 1.5px solid var(--border);
-  white-space: nowrap;
+  color: var(--text-muted);
 }
-.dash-reports-table td {
-  padding: 0.9rem 1rem;
+.dash-dropdown .dropdown-item {
+  font-size: 0.88rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Main content area */
+.dash-main {
+  padding: 1.75rem 0 3rem;
+}
+
+/* Four summary cards. Each card sets its colour with --tone. */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.summary-card {
+  --tone: var(--primary);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--tone);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.summary-card--pending       { --tone: var(--gold-dark); }
+.summary-card--investigation { --tone: var(--action); }
+.summary-card--resolved      { --tone: var(--success); }
+.summary-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--tone);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.summary-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.summary-value {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.1;
+}
+.summary-note {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* White panels that hold each dashboard section */
+.dash-panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+  overflow: hidden;
+}
+.dash-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.dash-panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+}
+.dash-panel-body {
+  padding: 1.25rem;
+}
+.dash-panel-body--flush {
+  padding: 0;
+}
+
+/* Recent reports table */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.dash-table th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface);
+  padding: 0.65rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.dash-table td {
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
-  color: var(--text);
 }
-.dash-reports-table tr:hover td {
-  background-color: rgba(31,95,168,0.03);
+.dash-table tr:last-child td {
+  border-bottom: none;
 }
-.dash-report-id-cell {
-  font-family: monospace;
+/* Report ID shown like a small stamp */
+.id-stamp {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.82rem;
   font-weight: 700;
+  color: var(--primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.btn-view {
+  background: var(--action-tint);
   color: var(--action);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+}
+.btn-view:hover {
+  background: var(--action);
+  color: var(--white);
+}
+.link-button {
+  background: none;
+  border: none;
+  color: var(--action);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0;
   cursor: pointer;
 }
-.dash-report-id-cell:hover {
+.link-button:hover {
   text-decoration: underline;
 }
 
-/* Action button in table */
-.btn-dash-action {
-  border: 1px solid var(--border);
-  background: var(--white);
-  color: var(--primary);
-  border-radius: var(--radius);
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: inline-flex;
+/* Quick action buttons */
+.quick-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.quick-action {
+  --tone: var(--action);
+  display: flex;
   align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  gap: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--tone);
+  border-radius: var(--radius);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+.quick-action:hover {
+  background: var(--surface);
+  color: var(--primary);
   text-decoration: none;
 }
-.btn-dash-action:hover {
-  background: var(--action-tint);
-  border-color: var(--action);
-  color: var(--action);
+.quick-action .bi:first-child {
+  color: var(--tone);
+  font-size: 1.2rem;
+}
+.quick-action .bi-arrow-right {
+  margin-left: auto;
+  color: var(--text-muted);
+}
+.quick-action--tip   { --tone: var(--teal); }
+.quick-action--track { --tone: var(--primary); }
+
+/* Profile rows */
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.profile-label {
+  color: var(--text-muted);
+}
+.profile-value {
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+  word-break: break-word;
+}
+.profile-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 0;
 }
 
-/* Empty State Box */
-.dash-empty-state {
+/* Notifications (used in the bell menu and in the Notifications panel) */
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notif-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.notif-item:last-child {
+  border-bottom: none;
+}
+.notif-item.unread {
+  background: var(--action-tint);
+}
+.notif-icon {
+  --tone: var(--primary);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--tone);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.notif-amber { --tone: var(--gold-dark); }
+.notif-blue  { --tone: var(--action); }
+.notif-green { --tone: var(--success); }
+.notif-slate { --tone: var(--text-muted); }
+.notif-empty {
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Empty state (no reports yet) */
+.dash-empty {
   text-align: center;
-  padding: 3.5rem 1.5rem;
+  padding: 2.5rem 1.5rem;
 }
 .dash-empty-icon {
   width: 72px;
   height: 72px;
+  margin: 0 auto 1rem;
   border-radius: 50%;
-  background: rgba(11,31,51,0.06);
-  color: var(--primary-mid);
-  display: inline-flex;
+  background: var(--action-tint);
+  color: var(--action);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.2rem;
-  margin-bottom: 1.25rem;
+  font-size: 2rem;
 }
-.dash-empty-title {
-  font-size: 1.2rem;
-  font-weight: 800;
+.dash-empty h3 {
+  font-size: 1.1rem;
   color: var(--primary);
-  margin-bottom: 0.4rem;
 }
-.dash-empty-desc {
+.dash-empty p {
   font-size: 0.9rem;
   color: var(--text-muted);
-  max-width: 440px;
-  margin: 0 auto 1.5rem;
+  max-width: 340px;
+  margin: 0 auto 1.25rem;
 }
 
-/* Notification Drawer / Modal */
-.notif-item {
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  transition: background-color 0.15s;
+/* Report details pop-up (Bootstrap modal) */
+.modal-content {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
 }
-.notif-item:hover {
-  background-color: #f8fafc;
-}
-.notif-item.unread {
-  background-color: #f0f7ff;
-}
-.notif-item-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.modal-title {
   font-size: 1rem;
-  flex-shrink: 0;
-}
-.notif-item-icon.info    { background: #dbeafe; color: #1e40af; }
-.notif-item-icon.success { background: #d1fae5; color: #065f46; }
-.notif-item-icon.warning { background: #fef3c7; color: #92400e; }
-.notif-item-content {
-  flex: 1;
-  min-width: 0;
-}
-.notif-item-title {
   font-weight: 700;
-  font-size: 0.88rem;
   color: var(--primary);
-  margin-bottom: 2px;
 }
-.notif-item-msg {
-  font-size: 0.82rem;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.notif-item-time {
+.detail-block-label {
   font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+.detail-text-block {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+  white-space: pre-wrap;
+}
+
+/* Dashboard on tablets and phones */
+@media (max-width: 991px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 }

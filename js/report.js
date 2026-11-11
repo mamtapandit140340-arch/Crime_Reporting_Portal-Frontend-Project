@@ -210,7 +210,23 @@ function submitCrimeReport() {
 
   // Retrieve logged-in user unique ID
   var currentUser = typeof Auth !== 'undefined' ? Auth.getSession() : null;
-  var currentUserId = currentUser ? (currentUser.userId || '') : (localStorage.getItem('sc_client_userId') || '');
+  // Prefer the normalized session ID. Fall back to the legacy key only if needed.
+  var currentUserId = currentUser && currentUser.userId
+    ? currentUser.userId
+    : (typeof Auth !== 'undefined' && typeof Auth.getUserId === 'function'
+        ? Auth.getUserId()
+        : (localStorage.getItem('sc_client_userId') || ''));
+  var currentUserEmail = currentUser && currentUser.email ? currentUser.email.trim().toLowerCase() : '';
+
+  if (!currentUser || !currentUserId) {
+    isSubmittingCrimeReport = false;
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Submit Report';
+    }
+    showToast('Your login session is missing. Please log in again before submitting.', 'error');
+    return;
+  }
 
   // Generate a unique tracking ID
   var trackingId = generateId('SC');
@@ -225,7 +241,8 @@ function submitCrimeReport() {
   var report = {
     id:              trackingId,
     reportId:        trackingId, // Alias for compatibility
-    userId:          currentUserId, // Attached logged-in user's unique ID
+    userId:          currentUserId,
+    ownerEmail:      currentUserEmail,
     title:           reportFormData['crime-type'] + ' at ' + (reportFormData['street-address'] || reportFormData['district'] || 'Location'),
     type:            reportFormData['crime-type'],
     category:        reportFormData['crime-type'],
@@ -239,8 +256,8 @@ function submitCrimeReport() {
     severity:        reportFormData['severity'],
     status:          'Pending',
     priority:        reportFormData.priority,
-    reporterName:    reportFormData['reporter-name'],
-    reporterEmail:   reportFormData['reporter-email'],
+    reporterName:    reportFormData['reporter-name'] || (currentUser ? currentUser.name : ''),
+    reporterEmail:   (reportFormData['reporter-email'] || currentUserEmail).trim().toLowerCase(),
     reporterPhone:   reportFormData['reporter-phone'],
     suspectName:     reportFormData['suspect-name'] || '',
     suspectDesc:     reportFormData['suspect-desc'] || '',

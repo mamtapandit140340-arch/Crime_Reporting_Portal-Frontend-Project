@@ -519,13 +519,52 @@ function safeSetJSON(key, value) {
 }
 
 /**
+ * migrateReportOwnership — safely attaches user IDs to older reports only
+ * when an exact ownerEmail/reporterEmail match exists in registered accounts.
+ * It never assigns unmatched sample reports to the Demo User.
+ */
+function migrateReportOwnership() {
+  var reports = safeGetJSON('sc_reports');
+  var users = safeGetJSON('sc_users');
+  var changed = false;
+
+  reports.forEach(function (report) {
+    if (!report || report.userId) return;
+
+    var reportEmails = [report.ownerEmail, report.reporterEmail]
+      .filter(Boolean)
+      .map(function (email) { return email.trim().toLowerCase(); });
+    if (reportEmails.length === 0) return;
+
+    var matchedUser = null;
+    if (reportEmails.indexOf('user@safecity.gov') !== -1) {
+      matchedUser = { userId: 'USER-101', email: 'user@safecity.gov' };
+    } else {
+      matchedUser = users.find(function (user) {
+        var userEmail = user.email ? user.email.trim().toLowerCase() : '';
+        return userEmail && reportEmails.indexOf(userEmail) !== -1 && user.userId;
+      });
+    }
+
+    if (matchedUser && matchedUser.userId) {
+      report.userId = matchedUser.userId;
+      report.ownerEmail = matchedUser.email.trim().toLowerCase();
+      changed = true;
+    }
+  });
+
+  if (changed) safeSetJSON('sc_reports', reports);
+  return reports;
+}
+
+/**
  * getUserReports — retrieves all crime reports belonging to a specific userId.
  * @param {string} userId - The unique identifier of the user
  * @returns {Array} array of reports matching the user
  */
 function getUserReports(userId) {
   if (!userId) return [];
-  var allReports = safeGetJSON('sc_reports');
+  var allReports = migrateReportOwnership();
   return allReports.filter(function (r) {
     return r.userId === userId;
   });

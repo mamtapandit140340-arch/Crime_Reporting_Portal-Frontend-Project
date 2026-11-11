@@ -20,6 +20,7 @@ function validateRequired(value, fieldName) {
 }
 
 /**
+ * 
  * validateEmail — checks standard email format using a regex.
  */
 function validateEmail(value) {

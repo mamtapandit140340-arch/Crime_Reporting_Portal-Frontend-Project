@@ -1,0 +1,509 @@
+/* SafeCity client dashboard styles. Loaded after the shared stylesheets. */
+body:has(.dash-banner) {
+    background: #f3f6fa
+}
+
+.dash-banner {
+    background: linear-gradient(120deg, #0b1f33, #173e63);
+    color: #fff;
+    padding: 2rem 0 2.25rem
+}
+
+.dash-banner .container,
+#main-content>.container {
+    max-width: 1180px
+}
+
+.dash-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem
+}
+
+.dash-user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .35rem .75rem;
+    margin-bottom: .65rem;
+    border: 1px solid #ffffff38;
+    border-radius: 999px;
+    background: #ffffff18;
+    color: #e8f1fb;
+    font-size: .78rem
+}
+
+.dash-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    font-weight: 750;
+    line-height: 1.2
+}
+
+.dash-subtitle {
+    max-width: 650px;
+    margin: .55rem 0 0;
+    color: #d2deeb;
+    font-size: .95rem
+}
+
+.dash-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    flex-wrap: wrap
+}
+
+.btn-notif-bell {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid #ffffff4d;
+    border-radius: 50%;
+    background: #ffffff1f;
+    color: #fff
+}
+
+.notif-badge-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    padding: 1px 5px;
+    border-radius: 20px;
+    background: #dc3545;
+    color: white;
+    font-size: .68rem;
+    text-align: center
+}
+
+#main-content {
+    padding: 2rem 0 3.25rem !important
+}
+
+.dash-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0 0 1.5rem
+}
+
+.dash-kpi-card {
+    min-width: 0;
+    min-height: 112px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #dce4ee;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 3px 12px #0f23370e;
+    transition: transform .18s, box-shadow .18s
+}
+
+.dash-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px #0f233717
+}
+
+.dash-kpi-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 1.35rem
+}
+
+.dash-kpi-icon.blue {
+    background: #eaf2ff;
+    color: #1d5fae
+}
+
+.dash-kpi-icon.amber {
+    background: #fff4dc;
+    color: #a96300
+}
+
+.dash-kpi-icon.indigo {
+    background: #eeedff;
+    color: #5145b8
+}
+
+.dash-kpi-icon.green {
+    background: #e4f6ee;
+    color: #08784e
+}
+
+.dash-kpi-body {
+    min-width: 0
+}
+
+.dash-kpi-val {
+    color: #102a43;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.1
+}
+
+.dash-kpi-label {
+    margin-top: .35rem;
+    color: #64748b;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .055em;
+    text-transform: uppercase
+}
+
+.dash-actions-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0 0 1.5rem
+}
+
+.dash-action-btn-card {
+    min-height: 86px;
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid #dce4ee;
+    border-radius: 12px;
+    background: #fff;
+    color: #17324d;
+    text-decoration: none;
+    box-shadow: 0 2px 8px #0f23370a;
+    transition: .18s
+}
+
+.dash-action-btn-card:hover {
+    border-color: #8db5e2;
+    color: #145ca8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px #0f233714
+}
+
+.dash-action-btn-card>i {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    border-radius: 10px;
+    background: #edf4fc;
+    font-size: 1.25rem
+}
+
+.dash-action-btn-card small {
+    display: block;
+    margin-top: .2rem;
+    color: #64748b !important;
+    line-height: 1.4
+}
+
+.dash-table-card {
+    overflow: hidden;
+    margin: 0 0 1.5rem;
+    padding: 1.35rem;
+    border: 1px solid #dce4ee;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 3px 12px #0f23370d
+}
+
+.dash-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e7edf4
+}
+
+.dash-table-title {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin: 0;
+    color: #102a43;
+    font-size: 1.15rem;
+    font-weight: 750
+}
+
+.dash-table-title>i {
+    color: #1f5fa8
+}
+
+.dash-filter-row {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    flex: 1 1 430px;
+    justify-content: flex-end
+}
+
+.dash-search-input-wrap {
+    position: relative;
+    flex: 1 1 250px;
+    max-width: 360px
+}
+
+.dash-search-input-wrap>i {
+    position: absolute;
+    top: 50%;
+    left: .8rem;
+    z-index: 1;
+    transform: translateY(-50%);
+    color: #8292a5
+}
+
+.dash-search-input-wrap input {
+    min-height: 40px;
+    padding-left: 2.35rem;
+    border-color: #d6e0eb;
+    border-radius: 8px;
+    font-size: .86rem
+}
+
+.dash-filter-row .form-select {
+    width: auto;
+    min-width: 165px;
+    min-height: 40px;
+    border-color: #d6e0eb;
+    border-radius: 8px;
+    font-size: .86rem
+}
+
+.table-responsive {
+    border: 1px solid #e5ebf2;
+    border-radius: 9px
+}
+
+.dash-reports-table {
+    width: 100%;
+    min-width: 850px;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .84rem
+}
+
+.dash-reports-table th {
+    padding: .85rem .8rem;
+    background: #f5f8fc;
+    color: #526579;
+    border-bottom: 1px solid #e1e8f0;
+    font-size: .7rem;
+    font-weight: 750;
+    letter-spacing: .045em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap
+}
+
+.dash-reports-table td {
+    padding: .85rem .8rem;
+    color: #26384a;
+    border-bottom: 1px solid #edf1f5;
+    vertical-align: middle;
+    white-space: nowrap
+}
+
+.dash-reports-table tbody tr:last-child td {
+    border-bottom: 0
+}
+
+.dash-reports-table tbody tr:hover td {
+    background: #f8fbff
+}
+
+.dash-report-id-cell {
+    color: #145ca8;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: .8rem;
+    font-weight: 700;
+    cursor: pointer
+}
+
+.btn-dash-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    min-height: 31px;
+    margin: 1px;
+    padding: .3rem .55rem;
+    border: 1px solid #d6e0eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #24445f;
+    font-size: .76rem;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer
+}
+
+.btn-dash-action:hover {
+    border-color: #8db5e2;
+    background: #edf5ff;
+    color: #145ca8
+}
+
+.dash-empty-state {
+    padding: 3rem 1rem;
+    text-align: center
+}
+
+.dash-empty-icon {
+    width: 64px;
+    height: 64px;
+    display: inline-grid;
+    place-items: center;
+    margin-bottom: .9rem;
+    border-radius: 50%;
+    background: #edf4fc;
+    color: #1f5fa8;
+    font-size: 1.8rem
+}
+
+.dash-empty-title {
+    margin: 0 0 .45rem;
+    color: #17324d;
+    font-size: 1.1rem;
+    font-weight: 750
+}
+
+.dash-empty-desc {
+    max-width: 520px;
+    margin: 0 auto 1.1rem;
+    color: #64748b;
+    font-size: .9rem;
+    line-height: 1.6
+}
+
+.status-badge,
+.dash-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: .28rem .6rem;
+    border-radius: 999px;
+    font-size: .68rem;
+    font-weight: 750;
+    white-space: nowrap
+}
+
+.status-pending {
+    background: #fff3d6;
+    color: #955b00
+}
+
+.status-under-investigation {
+    background: #e8efff;
+    color: #244eb5
+}
+
+.status-resolved,
+.status-closed {
+    background: #def5e9;
+    color: #087447
+}
+
+@media(max-width:992px) {
+    .dash-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .dash-actions-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+}
+
+@media(max-width:768px) {
+    .dash-banner {
+        padding: 1.5rem 0
+    }
+
+    .dash-banner-inner {
+        align-items: flex-start;
+        flex-direction: column
+    }
+
+    .dash-topbar-actions {
+        width: 100%
+    }
+
+    #main-content {
+        padding: 1.25rem 0 2rem !important
+    }
+
+    .dash-kpi-grid {
+        gap: .7rem
+    }
+
+    .dash-kpi-card {
+        min-height: 96px;
+        padding: .9rem;
+        gap: .7rem
+    }
+
+    .dash-kpi-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        font-size: 1.1rem
+    }
+
+    .dash-kpi-val {
+        font-size: 1.5rem
+    }
+
+    .dash-kpi-label {
+        font-size: .65rem
+    }
+
+    .dash-actions-row {
+        grid-template-columns: 1fr;
+        gap: .7rem
+    }
+
+    .dash-table-card {
+        padding: 1rem
+    }
+
+    .dash-filter-row {
+        flex-basis: 100%;
+        justify-content: stretch
+    }
+
+    .dash-search-input-wrap {
+        max-width: none
+    }
+
+    .dash-filter-row .form-select {
+        min-width: 135px
+    }
+}
+
+@media(max-width:420px) {
+    .dash-kpi-grid {
+        grid-template-columns: 1fr
+    }
+
+    .dash-filter-row {
+        flex-direction: column;
+        align-items: stretch
+    }
+
+    .dash-filter-row .form-select {
+        width: 100%
+    }
+}

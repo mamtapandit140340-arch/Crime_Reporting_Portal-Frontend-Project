@@ -46,7 +46,7 @@
 
   /* Typography */
   --font-base:   'sans-serif','arial', 'Public Sans', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
-  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-display:'sans-serif','arial', 'Source Serif 4', Georgia, 'Times New Roman', serif;
 
   /* Shape and shadows */
   --radius:    8px;

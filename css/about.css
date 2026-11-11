@@ -1,0 +1,290 @@
+
+/* ABOUT PAGE */
+
+.about-hero {
+    background: linear-gradient(120deg, #101418a8, #1962a7);
+    color: #c7bcbc;
+    padding: 85px 0;
+}
+
+.about-hero-content {
+    max-width: 760px;
+}
+
+.about-label,
+.section-label {
+    display: inline-block;
+    color: #1976d2;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+}
+
+.about-label {
+    color: #a9d5ff;
+}
+
+.about-hero h1 {
+    max-width: 700px;
+    font-size: clamp(2rem, 5vw, 3.3rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.about-hero p {
+    max-width: 650px;
+    color: #d9e6f2;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 28px;
+}
+
+.about-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 22px;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #12395c;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.about-primary-btn:hover {
+    background: #e7f1fa;
+    color: #0b2035;
+    transform: translateY(-2px);
+}
+
+/* GENERAL SECTIONS */
+
+.about-section,
+.features-section,
+.mission-section {
+    padding: 75px 0;
+}
+
+.about-section {
+    background: #ffffff;
+}
+
+.about-intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    max-width: 950px;
+    margin: auto;
+}
+
+.about-intro-icon {
+    flex-shrink: 0;
+    width: 75px;
+    height: 75px;
+    display: grid;
+    place-items: center;
+    background: #eaf3fc;
+    color: #1769aa;
+    border-radius: 16px;
+    font-size: 2rem;
+}
+
+.about-intro h2,
+.section-heading h2 {
+    color: #102a43;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.about-intro p,
+.section-heading p {
+    color: #607286;
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+/* SECTION HEADINGS */
+
+.section-heading {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 42px;
+}
+
+/* MISSION AND VISION */
+
+.mission-section {
+    background: #f2f6fa;
+}
+
+.purpose-card {
+    height: 100%;
+    background: #ffffff;
+    padding: 32px;
+    border: 1px solid #e0e7ef;
+    border-radius: 12px;
+    transition: 0.2s ease;
+}
+
+.purpose-card:hover,
+.feature-card:hover,
+.process-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(16, 42, 67, 0.09);
+}
+
+.purpose-icon {
+    width: 55px;
+    height: 55px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.mission-icon {
+    background: #e8f2ff;
+    color: #1769aa;
+}
+
+.vision-icon {
+    background: #e8f7f2;
+    color: #168365;
+}
+
+.purpose-card h3,
+.feature-card h3,
+.process-card h3 {
+    color: #658aac;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.purpose-card p,
+.feature-card p,
+.process-card p {
+    color: #647589;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* HOW IT WORKS */
+
+.process-card {
+    position: relative;
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid #e0e7ef;
+    border-radius: 12px;
+    padding: 27px 20px;
+    transition: 0.2s ease;
+}
+
+.process-number {
+    position: absolute;
+    top: 17px;
+    right: 18px;
+    color: #cbd8e5;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.process-icon {
+    display: block;
+    color: #1769aa;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* KEY FEATURES */
+
+.features-section {
+    background: #ffffff;
+}
+
+.feature-card {
+    height: 100%;
+    padding: 30px;
+    background: #f8fafc;
+    border: 1px solid #e0e7ef;
+    border-radius: 12px;
+    transition: 0.2s ease;
+}
+
+.feature-card > i {
+    display: inline-block;
+    color: #1769aa;
+    font-size: 2rem;
+    margin-bottom: 18px;
+}
+
+/* DISCLAIMER */
+
+.disclaimer-section {
+    padding: 35px 0;
+    background: #edf4fa;
+}
+
+.disclaimer-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    max-width: 950px;
+    margin: auto;
+}
+
+.disclaimer-content > i {
+    color: #1769aa;
+    font-size: 1.7rem;
+}
+
+.disclaimer-content h3 {
+    color: #102a43;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.disclaimer-content p {
+    color: #607286;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 767px) {
+    .about-hero {
+        padding: 60px 0;
+    }
+
+    .about-section,
+    .features-section,
+    .mission-section {
+        padding: 50px 0;
+    }
+
+    .about-intro {
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .about-intro h2,
+    .section-heading h2 {
+        font-size: 1.65rem;
+    }
+
+    .purpose-card,
+    .feature-card {
+        padding: 24px;
+    }
+
+    .disclaimer-content {
+        gap: 12px;
+    }
+}

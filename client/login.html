@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login – SafeCity</title>
   <link rel="icon" type="image/png" href="../assets/images/safecity-logo.png">
+
+  <!-- Fonts (fallback fonts are set in style.css) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
@@ -13,7 +19,7 @@
 </head>
 <body>
 
-<!-- NAVBAR (minimal — no active login link when on login page) -->
+<!-- NAVBAR (links are filled in by renderNavbar() in js/auth.js) -->
 <nav class="site-navbar navbar navbar-expand-lg" aria-label="Main navigation">
   <div class="container">
     <a class="navbar-brand" href="../index.html">
@@ -29,12 +35,12 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
-      <div id="nav-links-container" class="ms-auto"></div>
+      <div id="nav-links-container"></div>
     </div>
   </div>
 </nav>
 
-<!-- AUTH WRAPPER — centres the card vertically -->
+<!-- AUTH WRAPPER — centres the card between the navbar and the footer -->
 <div class="auth-wrapper">
   <div class="auth-card">
 
@@ -61,6 +67,17 @@
     <div class="auth-tab-panel active" id="tab-login">
       <form id="login-form" novalidate onsubmit="handleLogin(event)">
 
+        <!-- Role selection: only a check against the account's real role -->
+        <div class="mb-3">
+          <label for="login-role" class="form-label">
+            Login As <span class="required-star">*</span>
+          </label>
+          <select id="login-role" name="login-role" class="form-select">
+            <option value="client" selected>Client</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
         <div class="mb-3">
           <label for="login-email" class="form-label">
             Email Address <span class="required-star">*</span>
@@ -76,32 +93,48 @@
           <label for="login-password" class="form-label">
             Password <span class="required-star">*</span>
           </label>
-          <!-- Password field + toggle visibility button -->
-          <div style="position:relative;">
+          <!-- Password field + show/hide button (the wrapper is styled in client.css) -->
+          <div class="pw-wrap">
             <input type="password" id="login-password" name="login-password"
                    class="form-control" placeholder="Enter your password"
                    autocomplete="current-password"
-                   data-validate="required" data-label="Password"
-                   style="padding-right: 2.5rem;">
+                   data-validate="required" data-label="Password">
             <button type="button" class="pw-toggle"
                     onclick="togglePasswordVisibility('login-password', this)"
-                    aria-label="Toggle password visibility">
+                    aria-label="Show or hide password">
               <i class="bi bi-eye"></i>
             </button>
           </div>
           <div class="invalid-feedback"></div>
         </div>
 
-        <button type="submit" class="btn-submit-report w-100" style="margin-top:0.5rem;">
+        <button type="submit" class="btn-submit-report w-100 mt-2">
           <i class="bi bi-box-arrow-in-right me-1"></i> Login
         </button>
 
       </form>
+
+      <!-- The Anonymous Tip page is public, so it needs no login -->
+      <div class="auth-divider">or</div>
+      <a href="anonymous-tip.html" class="auth-alt-link">
+        <i class="bi bi-person-slash"></i> Continue as Anonymous
+      </a>
     </div>
 
-    <!-- ══ REGISTER TAB ══ -->
+    <!-- ══ REGISTER TAB (creates a Client account) ══ -->
     <div class="auth-tab-panel" id="tab-register">
       <form id="register-form" novalidate onsubmit="handleRegister(event)">
+
+          <!-- Role selection: only a check against the account's real role -->
+        <div class="mb-3">
+          <label for="login-role" class="form-label">
+            Login As <span class="required-star">*</span>
+          </label>
+          <select id="login-role" name="login-role" class="form-select">
+            <option value="client" selected>Client</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
 
         <div class="mb-3">
           <label for="reg-name" class="form-label">
@@ -137,14 +170,13 @@
           <label for="reg-password" class="form-label">
             Password <span class="required-star">*</span>
           </label>
-          <div style="position:relative;">
+          <div class="pw-wrap">
             <input type="password" id="reg-password" name="reg-password"
                    class="form-control" placeholder="Min. 8 characters with letters and numbers"
-                   data-validate="required|password" data-label="Password"
-                   style="padding-right: 2.5rem;">
+                   data-validate="required|password" data-label="Password">
             <button type="button" class="pw-toggle"
                     onclick="togglePasswordVisibility('reg-password', this)"
-                    aria-label="Toggle password visibility">
+                    aria-label="Show or hide password">
               <i class="bi bi-eye"></i>
             </button>
           </div>
@@ -166,7 +198,7 @@
           <div class="invalid-feedback"></div>
         </div>
 
-        <button type="submit" class="btn-teal-custom w-100 mt-1" style="border-radius:var(--radius); padding:0.65rem; font-weight:700; border:none; cursor:pointer;">
+        <button type="submit" class="btn-submit-report w-100 mt-2">
           <i class="bi bi-person-check me-1"></i> Create Account
         </button>
 
@@ -176,6 +208,28 @@
   </div><!-- /.auth-card -->
 </div><!-- /.auth-wrapper -->
 
+<!-- FOOTER (slim version, same on every client page) -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand-block">
+        <img src="../assets/images/safecity-logo.png" alt="">
+        <div>
+          <div class="footer-brand-name">SafeCity</div>
+          <p class="footer-tagline">Crime reporting and anonymous tips for a safer community.</p>
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="anonymous-tip.html">Anonymous Tip</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="current-year">2026</span> SafeCity · College project, not an official police or government website.
+    </div>
+  </div>
+</footer>
+
 <div id="toast-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -184,10 +238,11 @@
 <!-- Auth: session management, login/register/navbar logic all in auth.js -->
 <script src="../js/auth.js"></script>
 <script>
-  // Render navbar (login page is public — just show guest links)
+  // Build the navbar links (login page is public — guests see the guest links)
   renderNavbar('../');
 
-  // Redirect already-logged-in users away from login page
+  // People who are already logged in do not need the login page:
+  // send them to the right dashboard.
   (function () {
     var role = Auth.getRole();
     if (role === 'admin') {
@@ -197,7 +252,7 @@
     }
   })();
 
-  // Attach real-time validation and password strength once DOM is ready
+  // Real-time validation and the password strength bar
   document.addEventListener('DOMContentLoaded', function () {
     attachRealTimeValidation(document.getElementById('login-form'));
     attachRealTimeValidation(document.getElementById('register-form'));
