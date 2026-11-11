@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investigations – SafeCity Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/safecity-logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../responsive.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar" id="admin-sidebar">
+  <a class="sidebar-brand" href="dashboard.html">
+    <img src="../assets/images/safecity-logo.png" alt="SafeCity Logo">
+    <div class="sidebar-brand-text">
+      <span class="name">SafeCity</span>
+      <span class="sub">Admin Portal</span>
+    </div>
+  </a>
+  <div class="sidebar-nav-label">Main Menu</div>
+  <ul class="sidebar-nav">
+    <li><a href="dashboard.html"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+    <li><a href="crime-reports.html"><i class="bi bi-file-earmark-text"></i> Crime Reports <span class="nav-badge" id="nav-badge-reports">0</span></a></li>
+    <li><a href="anonymous-tips.html"><i class="bi bi-person-slash"></i> Anonymous Tips <span class="nav-badge" id="nav-badge-tips">0</span></a></li>
+    <li>
+      <a href="investigations.html" class="active">
+        <i class="bi bi-search"></i> Investigations
+      </a>
+    </li>
+    <li><a href="officers.html"><i class="bi bi-shield-shaded"></i> Officers</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="adminLogout()"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="admin-main">
+  <div class="admin-topbar">
+    <button class="hamburger-btn" id="sidebar-hamburger"><i class="bi bi-list"></i></button>
+    <div class="admin-topbar-title">Investigations</div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="topbar-date"></span>
+      <div class="topbar-avatar">AD</div>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="admin-page-title">Investigations</div>
+    <div class="admin-page-subtitle">Manage ongoing and closed case investigations.</div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3 class="table-card-title">All Investigations</h3>
+        <div class="d-flex gap-2">
+          <button class="btn-export" onclick="exportCSV(safeGetJSON('sc_investigations'), 'investigations.csv')">
+            <i class="bi bi-download"></i> Export
+          </button>
+          <button class="btn-add" onclick="openCreateInvestigation()">
+            <i class="bi bi-plus-lg"></i> New Investigation
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <select class="filter-select" id="filter-inv-status" aria-label="Filter by status">
+          <option value="">All Statuses</option>
+          <option value="Open">Open</option>
+          <option value="Active">Active</option>
+          <option value="Closed">Closed</option>
+        </select>
+        <select class="filter-select officer-dropdown" id="filter-inv-officer" aria-label="Filter by officer">
+          <option value="">All Officers</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive-wrapper">
+        <table class="admin-table" aria-label="Investigations table">
+          <thead>
+            <tr>
+              <th>Inv. ID</th>
+              <th>Report / Title</th>
+              <th>Start Date</th>
+              <th>Assigned Officer</th>
+              <th>Status</th>
+              <th>Last Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inv-tbody">
+            <tr><td colspan="7" class="text-center py-3 text-muted">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-pagination">
+        <span></span>
+        <div class="pagination-btns" id="inv-pagination"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW INVESTIGATION MODAL ══ -->
+<div class="admin-modal-overlay" id="inv-modal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h4 id="inv-modal-title">Investigation Details</h4>
+      <button class="btn-modal-close" onclick="closeAdminModal('inv-modal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="admin-modal-body" id="inv-modal-body"></div>
+    <div class="admin-modal-footer">
+      <button class="btn-step-prev" onclick="closeAdminModal('inv-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT INVESTIGATION MODAL ══ -->
+<div class="admin-modal-overlay" id="edit-inv-modal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h4>Edit Investigation</h4>
+      <button class="btn-modal-close" onclick="closeAdminModal('edit-inv-modal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <input type="hidden" id="edit-inv-id">
+      <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select id="edit-inv-status" class="form-select">
+          <option value="Open">Open</option>
+          <option value="Active">Active</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Assigned Officer</label>
+        <select id="edit-inv-officer" class="form-select officer-dropdown">
+          <option value="">— Unassigned —</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Investigation Notes</label>
+        <textarea id="edit-inv-notes" class="form-control" rows="4" placeholder="Add or update case notes…"></textarea>
+      </div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="btn-step-prev" onclick="closeAdminModal('edit-inv-modal')">Cancel</button>
+      <button class="btn-primary-custom" onclick="saveEditInvestigation()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CREATE INVESTIGATION MODAL ══ -->
+<div class="admin-modal-overlay" id="create-inv-modal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h4>Create New Investigation</h4>
+      <button class="btn-modal-close" onclick="closeAdminModal('create-inv-modal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <form id="create-inv-form" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Related Report ID</label>
+          <input type="text" id="new-inv-report-id" class="form-control" placeholder="e.g. SC-20241001-1021">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Investigation Title <span class="required-star">*</span></label>
+          <input type="text" id="new-inv-title" class="form-control"
+                 data-validate="required" data-label="Title"
+                 placeholder="Short descriptive title">
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <select id="new-inv-status" class="form-select">
+            <option value="Open">Open</option>
+            <option value="Active">Active</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Assign Officer</label>
+          <select id="new-inv-officer" class="form-select officer-dropdown">
+            <option value="">— Unassigned —</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Initial Notes</label>
+          <textarea id="new-inv-notes" class="form-control" rows="3" placeholder="Initial investigation notes…"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="btn-step-prev" onclick="closeAdminModal('create-inv-modal')">Cancel</button>
+      <button class="btn-primary-custom" onclick="saveCreateInvestigation()">Create Investigation</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../main.js"></script>
+<script src="../js/validation.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/admin.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () { loadInvestigationsPage(); });
+</script>
+</body>
+</html>

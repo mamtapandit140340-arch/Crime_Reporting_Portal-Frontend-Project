@@ -1,0 +1,616 @@
+/* ============================================================
+   client.css — Styles for client-facing pages:
+   report-crime.html, anonymous-tip.html,
+   track-report.html, login.html
+   ============================================================ */
+
+/* ── PAGE HEADER BAR ──────────────────────────────────────── */
+
+.page-header {
+  background: var(--primary);
+  color: var(--white);
+  padding: 2rem 0 1.75rem;
+}
+.page-header-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.3rem;
+}
+.page-header h1 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--white);
+  margin: 0;
+}
+.page-header p {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+}
+
+/* ── FORM WRAPPER CARD ────────────────────────────────────── */
+.form-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+/* ── SECTION DIVIDER INSIDE FORM ─────────────────────────── */
+.form-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-mid);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── FORM CONTROLS ────────────────────────────────────────── */
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.form-label .required-star {
+  color: var(--accent);
+  margin-left: 2px;
+}
+.form-control,
+.form-select {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  padding: 0.55rem 0.85rem;
+  color: var(--text);
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-mid);
+  box-shadow: 0 0 0 3px rgba(31,58,95,0.12);
+  outline: none;
+}
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--danger);
+}
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: var(--success);
+}
+.invalid-feedback {
+  font-size: 0.78rem;
+  color: var(--danger);
+  margin-top: 4px;
+  display: none;
+}
+.is-invalid ~ .invalid-feedback,
+.is-invalid + .invalid-feedback {
+  display: block;
+}
+.valid-feedback {
+  font-size: 0.78rem;
+  color: var(--success);
+  margin-top: 4px;
+}
+
+/* Character counter for textareas */
+.char-counter {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 3px;
+}
+.char-counter.near-limit { color: var(--warning); }
+.char-counter.at-limit   { color: var(--danger);  }
+
+/* ── MULTI-STEP PROGRESS BAR ──────────────────────────────── */
+.step-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 1.5rem 0 2rem;
+  position: relative;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+/* Connecting line between steps */
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 60%;
+  right: -40%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.step-item.completed:not(:last-child)::after {
+  background: var(--success);
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  transition: background-color 0.2s, color 0.2s;
+}
+.step-item.active .step-circle {
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: 0 0 0 4px rgba(13,27,42,0.15);
+}
+.step-item.completed .step-circle {
+  background: var(--success);
+  color: var(--white);
+}
+
+.step-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+.step-item.active .step-label {
+  color: var(--primary);
+}
+.step-item.completed .step-label {
+  color: var(--success);
+}
+
+/* ── FORM STEPS (show/hide) ───────────────────────────────── */
+.form-step {
+  display: none;
+}
+.form-step.active {
+  display: block;
+  animation: fadeStep 0.25s ease;
+}
+@keyframes fadeStep {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Step navigation buttons */
+.step-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.btn-step-prev {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-step-prev:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.btn-step-next {
+  background: var(--primary);
+  border: none;
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 0.5rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-step-next:hover {
+  background: var(--primary-mid);
+}
+.btn-submit-report {
+  background: var(--accent);
+  border: none;
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 0.6rem 1.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-submit-report:hover {
+  background: var(--accent-hover);
+}
+
+/* ── REVIEW SUMMARY (step 4) ──────────────────────────────── */
+.review-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.review-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-mid);
+  margin-bottom: 0.6rem;
+}
+.review-row {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+.review-key {
+  color: var(--text-muted);
+  min-width: 140px;
+  font-weight: 500;
+}
+.review-val {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ── SEVERITY RADIO BUTTONS ───────────────────────────────── */
+.severity-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.severity-option {
+  flex: 1;
+  min-width: 100px;
+}
+.severity-option input[type="radio"] {
+  display: none;
+}
+.severity-option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  color: var(--text-muted);
+}
+.severity-option input:checked + label {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--white);
+}
+.severity-option label:hover {
+  border-color: var(--primary-mid);
+  color: var(--primary);
+}
+
+/* ── SUCCESS MODAL ────────────────────────────────────────── */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.success-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+.success-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(39,174,96,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--success);
+  margin: 0 auto 1.25rem;
+}
+.success-box h3 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.success-box p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.tracking-id-box {
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+.tracking-id-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+.btn-copy-id {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-copy-id:hover {
+  background: var(--primary-mid);
+}
+
+/* ── TRACK REPORT — TIMELINE ──────────────────────────────── */
+.track-result-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  display: none;
+}
+.track-result-card.show {
+  display: block;
+  animation: fadeStep 0.3s ease;
+}
+
+.report-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+.report-info-item label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 2px;
+}
+.report-info-item span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Vertical timeline */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.25rem;
+  opacity: 0.4;
+}
+.timeline-item.completed,
+.timeline-item.current {
+  opacity: 1;
+}
+.timeline-dot {
+  position: absolute;
+  left: -1.65rem;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--border);
+}
+.timeline-item.completed .timeline-dot {
+  background: var(--success);
+  box-shadow: 0 0 0 2px var(--success);
+}
+.timeline-item.current .timeline-dot {
+  background: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+.timeline-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.timeline-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── LOGIN PAGE ───────────────────────────────────────────── */
+.auth-wrapper {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--surface);
+}
+.auth-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-md);
+}
+.auth-logo {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.auth-logo img {
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+.auth-logo h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin: 0;
+}
+.auth-logo p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Auth tabs */
+.auth-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.auth-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.65rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.auth-tab-panel {
+  display: none;
+}
+.auth-tab-panel.active {
+  display: block;
+}
+
+/* Admin hint box */
+.admin-hint {
+  background: rgba(13,27,42,0.05);
+  border: 1px solid rgba(13,27,42,0.12);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+}
+.admin-hint strong {
+  color: var(--primary-mid);
+}
+
+/* Password strength bar */
+.password-strength {
+  margin-top: 5px;
+}
+.strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.3s, background-color 0.3s;
+}
+.strength-weak   .strength-fill { width: 33%;  background: var(--danger);  }
+.strength-fair   .strength-fill { width: 66%;  background: var(--warning); }
+.strength-strong .strength-fill { width: 100%; background: var(--success); }
+.strength-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Anonymous tip — anon badge */
+.anon-badge-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.anon-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,137,123,0.08);
+  border: 1px solid rgba(0,137,123,0.2);
+  border-radius: 50px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--teal-dark);
+}

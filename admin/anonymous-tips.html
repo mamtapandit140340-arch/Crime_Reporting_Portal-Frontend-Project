@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anonymous Tips – SafeCity Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/safecity-logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../responsive.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar" id="admin-sidebar">
+  <a class="sidebar-brand" href="dashboard.html">
+    <img src="../assets/images/safecity-logo.png" alt="SafeCity Logo">
+    <div class="sidebar-brand-text">
+      <span class="name">SafeCity</span>
+      <span class="sub">Admin Portal</span>
+    </div>
+  </a>
+  <div class="sidebar-nav-label">Main Menu</div>
+  <ul class="sidebar-nav">
+    <li><a href="dashboard.html"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+    <li><a href="crime-reports.html"><i class="bi bi-file-earmark-text"></i> Crime Reports <span class="nav-badge" id="nav-badge-reports">0</span></a></li>
+    <li>
+      <a href="anonymous-tips.html" class="active">
+        <i class="bi bi-person-slash"></i> Anonymous Tips
+        <span class="nav-badge" id="nav-badge-tips">0</span>
+      </a>
+    </li>
+    <li><a href="investigations.html"><i class="bi bi-search"></i> Investigations</a></li>
+    <li><a href="officers.html"><i class="bi bi-shield-shaded"></i> Officers</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="adminLogout()"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="admin-main">
+  <div class="admin-topbar">
+    <button class="hamburger-btn" id="sidebar-hamburger"><i class="bi bi-list"></i></button>
+    <div class="admin-topbar-title">Anonymous Tips</div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="topbar-date"></span>
+      <div class="topbar-avatar">AD</div>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="admin-page-title">Anonymous Tips</div>
+    <div class="admin-page-subtitle">Review and manage all anonymously submitted tips. Identities are never stored.</div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3 class="table-card-title">All Tips</h3>
+        <div class="d-flex gap-2">
+          <span id="tips-header-count" style="line-height:2; font-size:0.8rem; color:var(--text-muted);"></span>
+          <button class="btn-export" onclick="exportCSV(safeGetJSON('sc_tips'), 'anonymous-tips.csv')">
+            <i class="bi bi-download"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="filter-search">
+          <i class="bi bi-search"></i>
+          <input type="text" id="search-tips" placeholder="Search by ID, location, description…" aria-label="Search tips">
+        </div>
+        <select class="filter-select" id="filter-tip-status" aria-label="Filter by status">
+          <option value="">All Statuses</option>
+          <option value="New">New</option>
+          <option value="Reviewed">Reviewed</option>
+          <option value="Actionable">Actionable</option>
+          <option value="Dismissed">Dismissed</option>
+        </select>
+        <select class="filter-select" id="filter-tip-category" aria-label="Filter by category">
+          <option value="">All Categories</option>
+          <option value="Drug Activity">Drug Activity</option>
+          <option value="Suspicious Person">Suspicious Person</option>
+          <option value="Theft">Theft</option>
+          <option value="Vandalism">Vandalism</option>
+          <option value="Domestic Disturbance">Domestic Disturbance</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive-wrapper">
+        <table class="admin-table" aria-label="Anonymous tips table">
+          <thead>
+            <tr>
+              <th>Tip ID</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tips-tbody">
+            <tr><td colspan="6" class="text-center py-3 text-muted">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-pagination">
+        <span id="tips-count"></span>
+        <div class="pagination-btns" id="tips-pagination"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW TIP MODAL ══ -->
+<div class="admin-modal-overlay" id="tip-modal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h4 id="tip-modal-title">Tip Details</h4>
+      <button class="btn-modal-close" onclick="closeAdminModal('tip-modal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="admin-modal-body" id="tip-modal-body"></div>
+    <div class="admin-modal-footer">
+      <button class="btn-step-prev" onclick="closeAdminModal('tip-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHANGE STATUS MODAL ══ -->
+<div class="admin-modal-overlay" id="change-tip-modal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h4>Change Tip Status</h4>
+      <button class="btn-modal-close" onclick="closeAdminModal('change-tip-modal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <input type="hidden" id="change-tip-id">
+      <div class="mb-3">
+        <label class="form-label">New Status</label>
+        <select id="change-tip-status-select" class="form-select">
+          <option value="New">New</option>
+          <option value="Reviewed">Reviewed</option>
+          <option value="Actionable">Actionable</option>
+          <option value="Dismissed">Dismissed</option>
+        </select>
+      </div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="btn-step-prev" onclick="closeAdminModal('change-tip-modal')">Cancel</button>
+      <button class="btn-primary-custom" onclick="saveChangeTipStatus()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../main.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/admin.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () { loadTipsPage(); });
+</script>
+</body>
+</html>

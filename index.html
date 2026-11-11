@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Crime Reporting Portal</title>
+  <meta name="description" content="SafeCity – Report crimes, submit anonymous tips, and track your reports.">
+  <link rel="icon" type="image/png" href="assets/images/safecity-logo.png">
+
+  <!-- Fonts: Public Sans (text) and Source Serif 4 (big headings).
+       If the fonts cannot load, the browser uses the fallback fonts set in style.css. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons 1.11 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Our custom styles (loads after Bootstrap so our rules win) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+<!-- Skip-to-main link (accessibility) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ══════════════════════════════════════════════
+     NAVBAR
+     Logo on the left, links on the right (flexbox in style.css).
+     The links are created by renderNavbar() in js/auth.js.
+     ══════════════════════════════════════════════ -->
+<nav class="site-navbar navbar navbar-expand-lg" aria-label="Main navigation">
+  <div class="container">
+
+    <!-- Brand logo + name -->
+    <a class="navbar-brand" href="index.html">
+      <img src="assets/images/safecity-logo.png" alt="SafeCity Logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">SafeCity</span>
+        <span class="brand-sub">Crime Reporting Portal</span>
+      </div>
+    </a>
+
+    <!-- Mobile hamburger button -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Nav links — rendered by auth.js based on login state -->
+    <div class="collapse navbar-collapse" id="mainNav">
+      <div id="nav-links-container"></div>
+    </div>
+
+  </div>
+</nav>
+
+<main id="main-content">
+
+  <!-- ══════════════════════════════════════════════
+       HERO SECTION
+       ══════════════════════════════════════════════ -->
+  <section class="hero-section" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="row align-items-center g-4">
+
+        <!-- Left column: headline + buttons -->
+        <div class="col-lg-7">
+
+          <div class="hero-badge">
+            <i class="bi bi-geo-alt-fill"></i>
+            Public safety reporting portal
+          </div>
+
+          <h1 class="hero-title" id="hero-heading">
+            Report crime.<br>
+            <span class="text-teal">Stay safe.</span>
+          </h1>
+
+          <p class="hero-lead">
+            Report an incident, send an anonymous tip and follow your
+            report's progress, all in one place. Anonymous tips never ask
+            for your name, email or phone number.
+          </p>
+
+          <!-- Main buttons -->
+          <div class="d-flex flex-wrap gap-2 hero-cta-row">
+            <a href="client/report-crime.html" class="btn-report">
+              <i class="bi bi-file-earmark-plus"></i> Report a Crime
+            </a>
+            <a href="client/anonymous-tip.html" class="btn-anon">
+              <i class="bi bi-person-slash"></i> Anonymous Tip
+            </a>
+          </div>
+
+          <!-- Three short facts (all true for this portal) -->
+          <div class="hero-trust">
+            <span class="hero-trust-item">
+              <i class="bi bi-person-slash"></i> No account needed for tips
+            </span>
+            <span class="hero-trust-item">
+              <i class="bi bi-upc-scan"></i> Track reports with a unique ID
+            </span>
+            <span class="hero-trust-item">
+              <i class="bi bi-telephone"></i> In an emergency, call 100
+            </span>
+          </div>
+        </div>
+
+        <!-- Right column: how a report moves (an example, not live data) -->
+        <div class="col-lg-5 journey-col">
+          <div class="journey-card">
+
+            <div class="journey-header">
+              <span class="journey-title">How a report moves</span>
+              <span class="journey-tag">Example</span>
+            </div>
+            <div class="journey-id">SC-YYYYMMDD-0000</div>
+
+            <ol class="journey-steps">
+              <li class="journey-step done">
+                Report submitted
+                <small>You get a tracking ID straight away.</small>
+              </li>
+              <li class="journey-step done">
+                Officer assigned
+                <small>An officer is given the case.</small>
+              </li>
+              <li class="journey-step current">
+                Under investigation
+                <small>Work on the case is in progress.</small>
+              </li>
+              <li class="journey-step">
+                Resolved
+                <small>The outcome is recorded.</small>
+              </li>
+              <li class="journey-step">
+                Closed
+                <small>The case is closed.</small>
+              </li>
+            </ol>
+
+            <p class="journey-note">
+              This is an example. Your own report shows its real status
+              on the Track Report page.
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       QUICK ACTIONS SECTION
+       Each card has its own colour (set by the quick-card--... class).
+       ══════════════════════════════════════════════ -->
+  <section class="quick-actions-section" aria-labelledby="quick-actions-heading">
+    <div class="container">
+
+      <p class="section-label">Quick Capabilities</p>
+      <h2 class="section-title" id="quick-actions-heading">Quick Actions</h2>
+      <p class="section-subtitle">
+        Select an action below to begin your submission or track an existing report.
+      </p>
+
+      <div class="row g-3">
+
+        <!-- Card 1: Report Crime -->
+        <div class="col-12 col-md-4">
+          <div class="quick-card quick-card--report">
+            <div class="quick-card-icon">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <div class="quick-card-hint">Login required</div>
+            <h3 class="quick-card-title">Report Crime</h3>
+            <p class="quick-card-text">
+              File a detailed report with the incident, location and suspect
+              details. You get a tracking ID to follow its progress.
+            </p>
+            <a href="client/report-crime.html" class="btn-card btn-card-blue">
+              File a Report <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Anonymous Tip -->
+        <div class="col-12 col-md-4">
+          <div class="quick-card quick-card--tip">
+            <div class="quick-card-icon">
+              <i class="bi bi-person-slash"></i>
+            </div>
+            <div class="quick-card-hint">No login needed</div>
+            <h3 class="quick-card-title">Anonymous Tip</h3>
+            <p class="quick-card-text">
+              Share information without giving your name, email or phone
+              number. No account is needed.
+            </p>
+            <a href="client/anonymous-tip.html" class="btn-card btn-card-teal">
+              Submit Tip <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: Track Report -->
+        <div class="col-12 col-md-4">
+          <div class="quick-card quick-card--track">
+            <div class="quick-card-icon">
+              <i class="bi bi-search"></i>
+            </div>
+            <div class="quick-card-hint">Login required</div>
+            <h3 class="quick-card-title">Track Report</h3>
+            <p class="quick-card-text">
+              See your report's current status and progress timeline using
+              its tracking ID.
+            </p>
+            <a href="client/track-report.html" class="btn-card btn-card-outline">
+              Track Now <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       EMERGENCY BANNER
+       ══════════════════════════════════════════════ -->
+  <section class="emergency-banner" aria-label="Emergency information">
+    <div class="container">
+      <div class="emergency-inner">
+
+        <div class="emergency-left">
+          <div class="emergency-icon-wrap">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <div>
+            <div class="emergency-label">Emergency</div>
+            <div class="emergency-text">
+              For emergencies, contact local emergency services.
+              Emergency Number: <strong>911 / 100</strong>
+            </div>
+          </div>
+        </div>
+
+        <a href="tel:100" class="btn-call-hotline">
+          <i class="bi bi-telephone-fill"></i> Call Hotline
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER (slim version — the same block is used on every client page)
+     ══════════════════════════════════════════════ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+
+    <div class="footer-main">
+      <div class="footer-brand-block">
+        <img src="assets/images/safecity-logo.png" alt="">
+        <div>
+          <div class="footer-brand-name">SafeCity</div>
+          <p class="footer-tagline">Crime reporting and anonymous tips for a safer community.</p>
+        </div>
+      </div>
+
+      <ul class="footer-links">
+        <li><a href="client/report-crime.html">Report Crime</a></li>
+        <li><a href="client/anonymous-tip.html">Anonymous Tip</a></li>
+        <li><a href="client/track-report.html">Track Report</a></li>
+        <li><a href="client/login.html">Login</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; <span id="current-year">2026</span> SafeCity · College project, not an official police or government website.
+    </div>
+
+  </div>
+</footer>
+
+<!-- Toast container (for notifications) -->
+<div id="toast-container"></div>
+
+<!-- Bootstrap JS (required for navbar collapse on mobile) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Our shared JS -->
+<script src="main.js"></script>
+<!-- Auth: session management + dynamic navbar -->
+<script src="js/auth.js"></script>
+<script>
+  // Build the navbar links for this root-level page (basePath = '')
+  renderNavbar('');
+</script>
+
+</body>
+</html> 

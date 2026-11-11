@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report a Crime – SafeCity</title>
+  <link rel="icon" type="image/png" href="../assets/images/safecity-logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../responsive.css">
+  <link rel="stylesheet" href="../css/client.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="site-navbar navbar navbar-expand-lg" aria-label="Main navigation">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">
+      <img src="../assets/images/safecity-logo.png" alt="SafeCity Logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">SafeCity</span>
+        <span class="brand-sub">Crime Reporting Portal</span>
+      </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <div id="nav-links-container" class="ms-auto"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <div class="page-header-label">Client Portal</div>
+    <h1><i class="bi bi-file-earmark-plus me-2"></i>Report a Crime</h1>
+    <p>Complete the form below. All submissions are encrypted and handled confidentially.</p>
+  </div>
+</div>
+
+<main id="main-content" style="padding: 2rem 0 3rem;">
+  <div class="container" style="max-width: 760px;">
+
+    <!-- STEP PROGRESS INDICATOR -->
+    <div class="step-progress" id="step-progress" role="progressbar" aria-label="Form progress">
+      <div class="step-item active" id="step-indicator-1">
+        <div class="step-circle">1</div>
+        <div class="step-label step-label-text">Incident</div>
+      </div>
+      <div class="step-item" id="step-indicator-2">
+        <div class="step-circle">2</div>
+        <div class="step-label step-label-text">Location</div>
+      </div>
+      <div class="step-item" id="step-indicator-3">
+        <div class="step-circle">3</div>
+        <div class="step-label step-label-text">Suspect</div>
+      </div>
+      <div class="step-item" id="step-indicator-4">
+        <div class="step-circle"><i class="bi bi-check2"></i></div>
+        <div class="step-label step-label-text">Review</div>
+      </div>
+    </div>
+
+    <!-- MULTI-STEP FORM CARD -->
+    <div class="form-card" id="report-form-card">
+      <form id="crime-report-form" novalidate>
+
+        <!-- ═══ STEP 1: Incident Information ═══ -->
+        <div class="form-step active" id="step-1">
+          <div class="form-section-title">Step 1 — Incident Information</div>
+
+          <!-- Crime Type -->
+          <div class="mb-3">
+            <label for="crime-type" class="form-label">
+              Crime Type <span class="required-star">*</span>
+            </label>
+            <select id="crime-type" name="crime-type" class="form-select"
+                    data-validate="required" data-label="Crime type">
+              <option value="">— Select crime type —</option>
+              <option value="Theft">Theft</option>
+              <option value="Assault">Assault</option>
+              <option value="Vandalism">Vandalism</option>
+              <option value="Burglary">Burglary</option>
+              <option value="Fraud">Fraud / Cybercrime</option>
+              <option value="Harassment">Harassment</option>
+              <option value="Drug Activity">Drug Activity</option>
+              <option value="Domestic Violence">Domestic Violence</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <!-- Date and Time (side by side on larger screens) -->
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <label for="incident-date" class="form-label">
+                Date of Incident <span class="required-star">*</span>
+              </label>
+              <input type="date" id="incident-date" name="incident-date"
+                     class="form-control"
+                     data-validate="required" data-label="Incident date"
+                     max=""><!-- max set by JS below -->
+              <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="incident-time" class="form-label">
+                Time of Incident <span class="required-star">*</span>
+              </label>
+              <input type="time" id="incident-time" name="incident-time"
+                     class="form-control"
+                     data-validate="required" data-label="Incident time">
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3 mt-3">
+            <label for="incident-description" class="form-label">
+              Incident Description <span class="required-star">*</span>
+            </label>
+            <textarea id="incident-description" name="incident-description"
+                      class="form-control" rows="5"
+                      placeholder="Describe what happened in detail. Minimum 50 characters."
+                      data-validate="required|minlength:50" data-label="Description"></textarea>
+            <div class="char-counter" id="desc-counter">0 / 1000 characters</div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <!-- Severity -->
+          <div class="mb-3">
+            <label class="form-label">Severity <span class="required-star">*</span></label>
+            <div class="severity-options">
+              <div class="severity-option">
+                <input type="radio" id="sev-minor" name="severity" value="Minor">
+                <label for="sev-minor"><i class="bi bi-circle me-1"></i>Minor</label>
+              </div>
+              <div class="severity-option">
+                <input type="radio" id="sev-moderate" name="severity" value="Moderate" checked>
+                <label for="sev-moderate"><i class="bi bi-dash-circle me-1"></i>Moderate</label>
+              </div>
+              <div class="severity-option">
+                <input type="radio" id="sev-serious" name="severity" value="Serious">
+                <label for="sev-serious"><i class="bi bi-exclamation-circle me-1"></i>Serious</label>
+              </div>
+              <div class="severity-option">
+                <input type="radio" id="sev-critical" name="severity" value="Critical">
+                <label for="sev-critical"><i class="bi bi-x-circle me-1"></i>Critical</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1 navigation -->
+          <div class="step-nav">
+            <span></span><!-- empty left side -->
+            <button type="button" class="btn-step-next" onclick="nextStep()">
+              Next: Location <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ STEP 2: Location Details ═══ -->
+        <div class="form-step" id="step-2">
+          <div class="form-section-title">Step 2 — Location Details</div>
+
+          <div class="mb-3">
+            <label for="street-address" class="form-label">
+              Street Address <span class="required-star">*</span>
+            </label>
+            <input type="text" id="street-address" name="street-address"
+                   class="form-control" placeholder="e.g. 12 MG Road, Near Bus Stand"
+                   data-validate="required" data-label="Street address">
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <label for="district" class="form-label">
+                City / District <span class="required-star">*</span>
+              </label>
+              <input type="text" id="district" name="district"
+                     class="form-control" placeholder="e.g. Ahmedabad"
+                     data-validate="required" data-label="District">
+              <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="state" class="form-label">
+                State <span class="required-star">*</span>
+              </label>
+              <input type="text" id="state" name="state"
+                     class="form-control" placeholder="e.g. Gujarat"
+                     data-validate="required" data-label="State">
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+
+          <div class="mb-3 mt-3">
+            <label for="landmark" class="form-label">Nearby Landmark (optional)</label>
+            <input type="text" id="landmark" name="landmark"
+                   class="form-control" placeholder="e.g. Opposite City Mall">
+          </div>
+
+          <!-- GPS detection -->
+          <div class="mb-3">
+            <label class="form-label">GPS Coordinates (optional)</label>
+            <div class="d-flex gap-2 flex-wrap mb-2">
+              <input type="text" id="gps-lat" name="gps-lat" class="form-control"
+                     placeholder="Latitude" readonly style="max-width:180px;">
+              <input type="text" id="gps-lon" name="gps-lon" class="form-control"
+                     placeholder="Longitude" readonly style="max-width:180px;">
+              <button type="button" id="gps-btn" class="btn-step-next" onclick="tryGetLocation()"
+                      style="white-space:nowrap;">
+                <i class="bi bi-geo-alt me-1"></i> Detect My Location
+              </button>
+            </div>
+            <small class="text-muted">Click the button above to auto-fill coordinates from your device.</small>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn-step-prev" onclick="prevStep()">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn-step-next" onclick="nextStep()">
+              Next: Suspect Info <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ STEP 3: Suspect & Witness Information ═══ -->
+        <div class="form-step" id="step-3">
+          <div class="form-section-title">Step 3 — Suspect &amp; Witness Information (Optional)</div>
+
+          <p class="text-muted" style="font-size:0.85rem;">
+            Providing suspect information helps investigators. All fields in this step are optional.
+          </p>
+
+          <div class="mb-3">
+            <label for="suspect-name" class="form-label">Suspect Name (if known)</label>
+            <input type="text" id="suspect-name" name="suspect-name"
+                   class="form-control" placeholder="Name or alias if known">
+          </div>
+
+          <div class="mb-3">
+            <label for="suspect-desc" class="form-label">Suspect Description</label>
+            <textarea id="suspect-desc" name="suspect-desc"
+                      class="form-control" rows="3"
+                      placeholder="Physical description, clothing, vehicle, etc."></textarea>
+          </div>
+
+          <hr style="border-color:var(--border);">
+
+          <div class="mb-3">
+            <label for="witness-name" class="form-label">Witness Name (if applicable)</label>
+            <input type="text" id="witness-name" name="witness-name"
+                   class="form-control" placeholder="Name of any witness">
+          </div>
+
+          <div class="mb-3">
+            <label for="witness-contact" class="form-label">Witness Contact</label>
+            <input type="text" id="witness-contact" name="witness-contact"
+                   class="form-control" placeholder="Phone or email of witness">
+          </div>
+
+          <div class="mb-3">
+            <label for="additional-notes" class="form-label">Additional Notes</label>
+            <textarea id="additional-notes" name="additional-notes"
+                      class="form-control" rows="3"
+                      placeholder="Any other relevant information"></textarea>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn-step-prev" onclick="prevStep()">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn-step-next" onclick="nextStep()">
+              Review &amp; Submit <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ STEP 4: Reporter Info & Review ═══ -->
+        <div class="form-step" id="step-4">
+          <div class="form-section-title">Step 4 — Your Details &amp; Review</div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-6">
+              <label for="reporter-name" class="form-label">
+                Your Full Name <span class="required-star">*</span>
+              </label>
+              <input type="text" id="reporter-name" name="reporter-name"
+                     class="form-control" placeholder="Full name"
+                     data-validate="required" data-label="Your name">
+              <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="reporter-phone" class="form-label">
+                Phone Number <span class="required-star">*</span>
+              </label>
+              <input type="tel" id="reporter-phone" name="reporter-phone"
+                     class="form-control" placeholder="10-digit mobile number"
+                     data-validate="required|phone" data-label="Phone number">
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="reporter-email" class="form-label">
+              Email Address <span class="required-star">*</span>
+            </label>
+            <input type="email" id="reporter-email" name="reporter-email"
+                   class="form-control" placeholder="your@email.com"
+                   data-validate="required|email" data-label="Email">
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <!-- Review summary -->
+          <div class="form-section-title mt-3">Review Your Submission</div>
+
+          <div class="review-section">
+            <div class="review-section-title">Incident</div>
+            <div class="review-row"><span class="review-key">Type:</span><span class="review-val" id="review-crime-type">—</span></div>
+            <div class="review-row"><span class="review-key">Date:</span><span class="review-val" id="review-date">—</span></div>
+            <div class="review-row"><span class="review-key">Time:</span><span class="review-val" id="review-time">—</span></div>
+            <div class="review-row"><span class="review-key">Severity:</span><span class="review-val" id="review-severity">—</span></div>
+            <div class="review-row"><span class="review-key">Description:</span><span class="review-val" id="review-description" style="white-space:pre-wrap">—</span></div>
+          </div>
+
+          <div class="review-section">
+            <div class="review-section-title">Location</div>
+            <div class="review-row"><span class="review-key">Address:</span><span class="review-val" id="review-address">—</span></div>
+            <div class="review-row"><span class="review-key">District:</span><span class="review-val" id="review-district">—</span></div>
+            <div class="review-row"><span class="review-key">State:</span><span class="review-val" id="review-state">—</span></div>
+            <div class="review-row"><span class="review-key">Landmark:</span><span class="review-val" id="review-landmark">—</span></div>
+          </div>
+
+          <div class="review-section">
+            <div class="review-section-title">Suspect</div>
+            <div class="review-row"><span class="review-key">Name:</span><span class="review-val" id="review-suspect-name">—</span></div>
+            <div class="review-row"><span class="review-key">Description:</span><span class="review-val" id="review-suspect-desc">—</span></div>
+          </div>
+
+          <!-- Accuracy confirmation -->
+          <div class="mb-3 mt-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="confirm-accuracy" name="confirm-accuracy">
+              <label class="form-check-label" for="confirm-accuracy" style="font-size:0.88rem;">
+                I confirm that the information provided above is accurate to the best of my knowledge.
+                I understand that filing a false report is a punishable offence.
+              </label>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button type="button" class="btn-step-prev" onclick="prevStep()">
+              <i class="bi bi-arrow-left me-1"></i> Edit Report
+            </button>
+            <button type="button" class="btn-submit-report" onclick="submitCrimeReport()">
+              <i class="bi bi-send me-1"></i> Submit Report
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /.form-card -->
+
+  </div><!-- /.container -->
+</main>
+
+<!-- SUCCESS MODAL -->
+<div id="report-success-modal" class="success-overlay" style="display:none;">
+  <div class="success-box">
+    <div class="success-icon"><i class="bi bi-check2-circle"></i></div>
+    <h3>Report Submitted!</h3>
+    <p>Your crime report has been received. Save your tracking ID to follow up on the status.</p>
+    <div class="tracking-id-box">
+      <span class="tracking-id-value" id="modal-tracking-id">SC-00000000-0000</span>
+      <button class="btn-copy-id" onclick="copyTrackingId()">
+        <i class="bi bi-clipboard me-1"></i> Copy
+      </button>
+    </div>
+    <p style="font-size:0.8rem;">Use this ID on the <a href="track-report.html">Track Report</a> page.</p>
+    <a href="../index.html" class="btn-submit-report" style="display:inline-block;text-decoration:none;margin-top:0.5rem;">
+      <i class="bi bi-house me-1"></i> Back to Home
+    </a>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../main.js"></script>
+<script src="../js/validation.js"></script>
+<script src="../js/report.js"></script>
+<script>
+  // Initialize the multi-step wizard and set today as the max date
+  document.addEventListener('DOMContentLoaded', function () {
+    initReportWizard();
+    // Prevent selecting future dates for incident
+    var dateInput = document.getElementById('incident-date');
+    if (dateInput) {
+      dateInput.max = new Date().toISOString().split('T')[0];
+    }
+  });
+</script>
+<!-- Auth: session management + dynamic navbar + page guard -->
+<script src="../js/auth.js"></script>
+<script>
+  guardPage('user', '../');  // redirect guests to login
+  renderNavbar('../');       // build navbar for client/ pages
+</script>
+</body>
+</html>

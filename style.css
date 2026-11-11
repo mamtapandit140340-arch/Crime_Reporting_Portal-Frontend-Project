@@ -1,0 +1,958 @@
+/* ============================================================
+   SafeCity Crime Reporting Portal — style.css
+   Shared styles for ALL pages (colours, navbar, footer, home page
+   sections, buttons, status badges, toast, confirm dialog).
+   Page-specific styles live in css/client.css and css/admin.css.
+
+   HOW THIS FILE IS ORGANISED
+   1. Design tokens (colours, fonts, sizes) — change a colour once here
+   2. Base reset        3. Typography      4. Navbar
+   5. Home hero         6. Report journey card
+   7. Quick actions     8. Emergency banner
+   9. Footer           10. Shared buttons  11. Status badges
+   12. Toast           13. Confirm dialog  14. Shared animations
+   ============================================================ */
+
+/* ── 1. DESIGN TOKENS ──────────────────────────────────────── */
+/* Every colour on the site comes from these variables.
+   Example: color: var(--primary);  */
+:root {
+  /* Brand colours */
+  --primary:        #0b1f33;   /* deep navy – hero, footer, sidebar, headings */
+  --primary-mid:    #16385c;   /* mid navy – hover states, accents            */
+  --action:         #1f5fa8;   /* civic blue – main buttons, links, focus     */
+  --action-hover:   #184e8c;   /* darker blue for hover                       */
+  --action-tint:    #edf2f9;   /* very light blue – hover backgrounds         */
+  --teal:           #00796b;   /* teal – Anonymous Tip and "verified" things  */
+  --teal-dark:      #005f54;   /* teal hover                                  */
+  --accent:         #b42318;   /* red – ONLY for danger: delete, critical     */
+  --accent-hover:   #912018;   /* red hover                                   */
+  --gold:           #d97706;   /* amber – icons and warnings                  */
+  --gold-dark:      #b45309;   /* dark amber – text on light backgrounds      */
+  --emergency:      #ffb020;   /* bright amber – emergency banner only        */
+
+  /* Surfaces, borders and text */
+  --surface:        #f4f6f8;   /* light grey page background                  */
+  --white:          #ffffff;
+  --border:         #d8dee6;
+  --text:           #14202e;
+  --text-muted:     #4b5b6b;
+
+  /* Message colours (toasts, icons) */
+  --success:        #067647;
+  --warning:        #b54708;
+  --danger:         #b42318;
+  --info:           #1f5fa8;
+
+  /* Typography */
+  --font-base:   'sans-serif','arial', 'Public Sans', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* Shape and shadows */
+  --radius:    8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(11, 31, 51, 0.08);
+  --shadow-md: 0 4px 12px rgba(11, 31, 51, 0.10);
+  --shadow-lg: 0 8px 24px rgba(11, 31, 51, 0.14);
+}
+
+/* ── 2. BASE RESET ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: 1rem;
+  color: var(--text);
+  background-color: var(--surface);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+/* Skip-to-main link for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--action);
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* A visible outline when someone navigates with the Tab key */
+a:focus-visible,
+button:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid rgba(31, 95, 168, 0.45);
+  outline-offset: 2px;
+}
+
+/* People who ask their device for less motion get no animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── 3. TYPOGRAPHY ─────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-base);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+a {
+  color: var(--action);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--action-hover);
+  text-decoration: underline;
+}
+
+/* Links that look like buttons should never be underlined */
+.btn-report:hover,
+.btn-anon:hover,
+.btn-card:hover,
+.btn-call-hotline:hover,
+.btn-nav-login:hover,
+.site-navbar a:hover {
+  text-decoration: none;
+}
+
+/* ── 4. NAVBAR ─────────────────────────────────────────────── */
+/* Layout: logo + name on the LEFT, links on the RIGHT.
+   Bootstrap's .container inside the navbar is already a flex box;
+   we set the three important flex rules explicitly so they are easy to see. */
+.site-navbar {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0.5rem 0;
+}
+.site-navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Brand logo + text */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.brand-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.brand-sub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The collapse area holds the links; it only takes the space it needs,
+   so space-between pushes it to the right edge. */
+.site-navbar .navbar-collapse {
+  flex-grow: 0;
+  justify-content: flex-end;
+}
+
+/* Wrapper filled by renderNavbar() in js/auth.js */
+#nav-links-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.site-navbar .nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius) var(--radius) 0 0;
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.site-navbar .nav-link:hover {
+  color: var(--action);
+  background-color: var(--action-tint);
+}
+
+/* Active page: light blue tab with a blue bar underneath.
+   (renderNavbar() adds the "active" class to the link of the open page.) */
+.site-navbar .nav-link.active {
+  color: var(--action);
+  font-weight: 700;
+  background-color: var(--action-tint);
+  box-shadow: inset 0 -3px 0 var(--action);
+}
+
+/* Group on the far right: login button, or name chip + logout */
+.nav-auth-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.75rem;
+}
+
+/* Login button */
+.btn-nav-login {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--white);
+  background-color: var(--action);
+  border: 2px solid var(--action);
+  border-radius: var(--radius);
+  padding: 0.3rem 1rem;
+  transition: background-color 0.2s, border-color 0.2s;
+  display: inline-block;
+  white-space: nowrap;
+}
+.btn-nav-login:hover {
+  background-color: var(--action-hover);
+  border-color: var(--action-hover);
+  color: var(--white);
+}
+
+/* Logged-in name chip */
+.navbar-user-chip {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--primary);
+  background-color: var(--action-tint);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  white-space: nowrap;
+}
+
+/* Logout button */
+.btn-nav-logout {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem 0.75rem;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn-nav-logout:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
+
+/* Password show/hide button (login page) */
+.pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.pw-toggle:hover { color: var(--primary); }
+
+/* Mobile menu button */
+.navbar-toggler {
+  border: none;
+  padding: 4px 8px;
+}
+.navbar-toggler:focus {
+  box-shadow: none;
+  outline: 2px solid var(--action);
+}
+
+/* ── 5. HOME HERO ──────────────────────────────────────────── */
+.hero-section {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 4rem 0 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint street-grid pattern behind the hero (pure CSS, no image file) */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+/* Keep the hero content above the pattern */
+.hero-section .container {
+  position: relative;
+}
+
+/* Small pill above the headline */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 1.25rem;
+}
+
+/* Main headline (serif font gives it a calm, trustworthy feel) */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+.hero-title .text-teal {
+  color: #4dd0c4; /* bright teal highlight on the dark background */
+}
+
+.hero-lead {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.6;
+  max-width: 500px;
+  margin-bottom: 1.75rem;
+}
+
+/* Hero buttons (shared look) */
+.btn-report,
+.btn-anon {
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background-color 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Main action: white button on the dark hero */
+.btn-report {
+  background-color: var(--white);
+  color: var(--primary);
+}
+.btn-report:hover {
+  background-color: #e6edf5;
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+/* Anonymous Tip always uses teal */
+.btn-anon {
+  background-color: var(--teal);
+  color: var(--white);
+}
+.btn-anon:hover {
+  background-color: var(--teal-dark);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+/* Three short facts under the buttons */
+.hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.5rem;
+}
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+.hero-trust-item i {
+  color: #4dd0c4;
+}
+
+/* ── 6. REPORT JOURNEY CARD (hero, right side) ─────────────── */
+/* A small illustration of how a report moves from start to finish.
+   The steps use the same stages as the Track Report page. */
+.journey-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem 1.4rem;
+  color: var(--white);
+}
+.journey-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.journey-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+}
+.journey-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
+}
+.journey-id {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #4dd0c4;
+  margin-bottom: 1.1rem;
+}
+
+.journey-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.journey-step {
+  position: relative;
+  padding: 0 0 1rem 2rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+.journey-step:last-child {
+  padding-bottom: 0;
+}
+.journey-step small {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.62);
+}
+/* The dot in front of each step */
+.journey-step::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+/* The line joining one dot to the next */
+.journey-step::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 20px;
+  bottom: 2px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.journey-step:last-child::before {
+  display: none;
+}
+/* Finished steps are bright; the current step is solid white */
+.journey-step.done {
+  color: var(--white);
+}
+.journey-step.done::after {
+  background: #4dd0c4;
+  border-color: #4dd0c4;
+}
+.journey-step.done::before {
+  background: #4dd0c4;
+}
+.journey-step.current {
+  color: var(--white);
+}
+.journey-step.current::after {
+  background: var(--white);
+  border-color: var(--white);
+}
+.journey-note {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 1.1rem 0 0;
+  line-height: 1.45;
+}
+
+/* ── 7. QUICK ACTIONS ──────────────────────────────────────── */
+.quick-actions-section {
+  background-color: var(--white);
+  padding: 4rem 0;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.4rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.section-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+/* Each card sets its own colour with --card-color, and the border,
+   icon and small label all use it. */
+.quick-card {
+  --card-color: var(--primary);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--card-color);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.quick-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.quick-card--report { --card-color: var(--action); }
+.quick-card--tip    { --card-color: var(--teal); }
+.quick-card--track  { --card-color: var(--primary); }
+
+.quick-card-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--card-color);
+  margin-bottom: 1rem;
+}
+.quick-card-hint {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--card-color);
+  margin-bottom: 0.25rem;
+}
+.quick-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.quick-card-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 1.25rem;
+}
+
+/* Card buttons: .btn-card is the shared shape, the modifier sets the colour */
+.btn-card {
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: background-color 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+}
+.btn-card-blue {
+  background-color: var(--action);
+  color: var(--white);
+}
+.btn-card-blue:hover {
+  background-color: var(--action-hover);
+  color: var(--white);
+}
+.btn-card-teal {
+  background-color: var(--teal);
+  color: var(--white);
+}
+.btn-card-teal:hover {
+  background-color: var(--teal-dark);
+  color: var(--white);
+}
+.btn-card-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-card-outline:hover {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+/* ── 8. EMERGENCY BANNER ───────────────────────────────────── */
+/* Dark text on bright amber is easy to read (white text was not). */
+.emergency-banner {
+  background-color: var(--emergency);
+  padding: 1rem 0;
+}
+.emergency-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.emergency-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--primary);
+}
+.emergency-icon-wrap {
+  width: 40px;
+  height: 40px;
+  background: rgba(11, 31, 51, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.emergency-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(11, 31, 51, 0.85);
+  margin-bottom: 1px;
+}
+.emergency-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+.emergency-text strong {
+  font-weight: 800;
+}
+.btn-call-hotline {
+  background: var(--primary);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1.25rem;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn-call-hotline:hover {
+  background: var(--primary-mid);
+  color: var(--white);
+}
+
+/* ── 9. FOOTER ─────────────────────────────────────────────── */
+/* Slim footer: brand + short sentence on the left, four links on the
+   right, one copyright line underneath. */
+.site-footer {
+  background-color: var(--primary);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 1.5rem 0 1rem;
+}
+.footer-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+}
+.footer-brand-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-brand-block img {
+  height: 32px;
+  width: auto;
+}
+.footer-brand-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.1;
+}
+.footer-tagline {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-links a {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: var(--white);
+}
+.footer-bottom {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+}
+
+/* Old footer pieces still used by client/track-report.html.
+   They will be removed when that page gets the new footer (Stage 4B). */
+.footer-brand-sub {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.footer-col-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.75rem;
+}
+.footer-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 1.5rem 0 1rem;
+}
+.footer-bottom-tagline {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── 10. SHARED BUTTONS ────────────────────────────────────── */
+/* Main button used in forms and admin dialogs */
+.btn-primary-custom {
+  background-color: var(--action);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+.btn-primary-custom:hover {
+  background-color: var(--action-hover);
+  transform: translateY(-1px);
+}
+
+.btn-teal-custom {
+  background-color: var(--teal);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.btn-teal-custom:hover {
+  background-color: var(--teal-dark);
+}
+
+/* ── 11. STATUS BADGES ─────────────────────────────────────── */
+/* Same status = same colour on every page.
+   Amber = needs attention   Blue = in progress   Green = done well
+   Slate = finished/inactive Red = critical       Teal = reviewed tips */
+.badge-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+/* Report statuses */
+.badge-pending     { background: #fef3c7; color: #92400e; }
+.badge-active      { background: #dbeafe; color: #1e40af; }
+.badge-resolved    { background: #d1fadf; color: #05603a; }
+.badge-closed      { background: #e5e9ee; color: #334155; }
+/* Tip statuses */
+.badge-new         { background: #fef3c7; color: #92400e; }
+.badge-reviewed    { background: #ccfbf1; color: #115e59; }
+.badge-actionable  { background: #ffedd5; color: #9a3412; }
+.badge-dismissed   { background: #e5e9ee; color: #334155; }
+/* Officer status "On Leave" */
+.badge-warning     { background: #fef3c7; color: #92400e; }
+/* Priority levels */
+.badge-critical    { background: #fee4e2; color: #912018; }
+.badge-high        { background: #ffedd5; color: #9a3412; }
+.badge-medium      { background: #e0eaf5; color: #1e3a5f; }
+.badge-low         { background: #dcfce7; color: #14532d; }
+
+/* ── 12. TOAST NOTIFICATIONS ───────────────────────────────── */
+/* z-index is higher than every dialog so a message is never hidden. */
+#toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast-msg {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  box-shadow: var(--shadow-md);
+  animation: slideIn 0.3s ease;
+  min-width: 250px;
+  max-width: 360px;
+}
+.toast-success { background: var(--success); }
+.toast-error   { background: var(--danger);  }
+.toast-warning { background: var(--warning); }
+.toast-info    { background: var(--info);    }
+
+/* ── 13. CONFIRMATION DIALOG ───────────────────────────────── */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+.confirm-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.confirm-box h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+.confirm-box p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* ── 14. SHARED ANIMATIONS ─────────────────────────────────── */
+/* pulse-dot is used by the Track Report timeline (css/client.css) */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+@keyframes slideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
