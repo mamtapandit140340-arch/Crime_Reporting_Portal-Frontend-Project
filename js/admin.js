@@ -614,6 +614,7 @@ function openEditReportModal(reportId) {
 
 /**
  * saveEditReport — saves the edited status/officer back to localStorage.
+ * Preserves reportId and userId, updates statusHistory, and generates a notification.
  */
 function saveEditReport() {
   var id       = document.getElementById('edit-report-id').value;
@@ -622,17 +623,55 @@ function saveEditReport() {
   var priority = document.getElementById('edit-report-priority').value;
 
   var reports = safeGetJSON('sc_reports');
-  var idx = reports.findIndex(function (r) { return r.id === id; });
+  var idx = reports.findIndex(function (r) {
+    return r.id === id || r.reportId === id;
+  });
   if (idx === -1) return;
 
+  var oldStatus = reports[idx].status;
+  var nowISO = new Date().toISOString();
+
+  // Update fields in-place while preserving id, reportId, userId, date, reporter details
   reports[idx].status          = status;
   reports[idx].assignedOfficer = officer;
   reports[idx].priority        = priority;
+  reports[idx].updatedAt       = nowISO;
+
+  // Record status update in statusHistory
+  if (!Array.isArray(reports[idx].statusHistory)) {
+    reports[idx].statusHistory = [];
+  }
+
+  if (oldStatus !== status) {
+    reports[idx].statusHistory.push({
+      status: status,
+      date: nowISO,
+      officer: officer || 'Police Department',
+      note: 'Status updated from ' + oldStatus + ' to ' + status
+    });
+
+    // Notify user if report belongs to a registered client
+    var targetUserId = reports[idx].userId;
+    if (targetUserId && typeof addNotification === 'function') {
+      var notifType = (status === 'Resolved' || status === 'Closed') ? 'success' : 'info';
+      var notifTitle = 'Report Status: ' + status;
+      var notifMessage = 'Your crime report ' + (reports[idx].id || id) + ' (' + (reports[idx].type || 'Incident') + ') has been updated to "' + status + '".';
+      addNotification({
+        userId: targetUserId,
+        reportId: reports[idx].id || id,
+        title: notifTitle,
+        message: notifMessage,
+        type: notifType
+      });
+    }
+  }
+
   safeSetJSON('sc_reports', reports);
 
   closeAdminModal('edit-report-modal');
   filteredReports = reports;
   renderReportsTable();
+  updateNavBadges();
   showToast('Report updated successfully.', 'success');
 }
 

@@ -199,6 +199,19 @@
 <script>
   guardPage('user', '../');  // redirect guests to login
   renderNavbar('../');       // build navbar for client/ pages
+
+  // Auto-fill and track if 'id' parameter is provided in URL
+  document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var queryId = params.get('id');
+    if (queryId) {
+      var input = document.getElementById('tracking-id-input');
+      if (input) {
+        input.value = queryId;
+        trackReport();
+      }
+    }
+  });
 </script>
 </body>
 </html>

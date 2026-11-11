@@ -17,12 +17,30 @@ var totalSteps  = 4;
 // Object to hold all form data across steps before final submit
 var reportFormData = {};
 
+// Prevent duplicate rapid submissions
+var isSubmittingCrimeReport = false;
+
 /**
  * initReportWizard — sets up the multi-step form on page load.
  * Call this from report-crime.html after the DOM is ready.
  */
 function initReportWizard() {
   showStep(1);
+
+  // Auto-fill reporter details if a client user is logged in
+  if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+    var currentUser = Auth.getSession();
+    if (currentUser) {
+      var nameInput = document.getElementById('reporter-name');
+      var emailInput = document.getElementById('reporter-email');
+      if (nameInput && !nameInput.value && currentUser.name) {
+        nameInput.value = currentUser.name;
+      }
+      if (emailInput && !emailInput.value && currentUser.email) {
+        emailInput.value = currentUser.email;
+      }
+    }
+  }
 
   // Attach character counter to description textarea
   var descTextarea = document.getElementById('incident-description');
@@ -158,6 +176,8 @@ function populateReviewPanel() {
  * localStorage, and shows the success modal with tracking ID.
  */
 function submitCrimeReport() {
+  if (isSubmittingCrimeReport) return; // Prevent duplicate rapid clicks
+
   var stepPanel = document.getElementById('step-4');
   if (!stepPanel) return;
 
@@ -178,25 +198,43 @@ function submitCrimeReport() {
     return;
   }
 
+  isSubmittingCrimeReport = true;
+  var submitBtn = stepPanel.querySelector('.btn-submit-report');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting…';
+  }
+
   // Collect final step data
   collectStepData(stepPanel);
 
-  // Generate a tracking ID
+  // Retrieve logged-in user unique ID
+  var currentUser = typeof Auth !== 'undefined' ? Auth.getSession() : null;
+  var currentUserId = currentUser ? (currentUser.userId || '') : (localStorage.getItem('sc_client_userId') || '');
+
+  // Generate a unique tracking ID
   var trackingId = generateId('SC');
+  var nowISO = new Date().toISOString();
   reportFormData.id          = trackingId;
   reportFormData.status      = 'Pending';
   reportFormData.priority    = derivePriority(reportFormData['severity']);
-  reportFormData.submittedAt = new Date().toISOString();
+  reportFormData.submittedAt = nowISO;
   reportFormData.assignedOfficer = '';
 
-  // Map form field names to storage field names
+  // Map form field names to storage field names with proper user ownership
   var report = {
-    id:              reportFormData.id,
+    id:              trackingId,
+    reportId:        trackingId, // Alias for compatibility
+    userId:          currentUserId, // Attached logged-in user's unique ID
+    title:           reportFormData['crime-type'] + ' at ' + (reportFormData['street-address'] || reportFormData['district'] || 'Location'),
+    type:            reportFormData['crime-type'],
+    category:        reportFormData['crime-type'],
     date:            reportFormData['incident-date'],
     time:            reportFormData['incident-time'],
-    type:            reportFormData['crime-type'],
     location:        reportFormData['street-address'] + ', ' + reportFormData['district'],
     district:        reportFormData['district'],
+    state:           reportFormData['state'] || '',
+    landmark:        reportFormData['landmark'] || '',
     description:     reportFormData['incident-description'],
     severity:        reportFormData['severity'],
     status:          'Pending',
@@ -207,16 +245,46 @@ function submitCrimeReport() {
     suspectName:     reportFormData['suspect-name'] || '',
     suspectDesc:     reportFormData['suspect-desc'] || '',
     assignedOfficer: '',
-    submittedAt:     reportFormData.submittedAt
+    submittedAt:     nowISO,
+    updatedAt:       nowISO,
+    statusHistory:   [
+      {
+        status: 'Pending',
+        date: nowISO,
+        note: 'Crime report filed by citizen'
+      }
+    ]
   };
 
-  // Save to localStorage
+  // Save to localStorage using the shared sc_reports array
   var reports = safeGetJSON('sc_reports');
   reports.unshift(report); // Add to beginning of array
   safeSetJSON('sc_reports', reports);
 
+  // Add initial notification for user
+  if (currentUserId && typeof addNotification === 'function') {
+    addNotification({
+      userId: currentUserId,
+      reportId: trackingId,
+      title: 'Report Submitted',
+      message: 'Your crime report ' + trackingId + ' (' + report.type + ') has been submitted and is pending police review.',
+      type: 'info'
+    });
+  }
+
+  showToast('Crime report submitted successfully! Tracking ID: ' + trackingId, 'success', 3500);
+
   // Show success modal
   showReportSuccessModal(trackingId);
+
+  // Reset submit state
+  setTimeout(function () {
+    isSubmittingCrimeReport = false;
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Submit Report';
+    }
+  }, 1000);
 }
 
 /**
@@ -326,8 +394,10 @@ function trackReport() {
 
   // Find the report with the matching ID
   for (var i = 0; i < reports.length; i++) {
-    if (reports[i].id.toUpperCase() === trackingId) {
-      report = reports[i];
+    var r = reports[i];
+    if ((r.id && r.id.toUpperCase() === trackingId) ||
+        (r.reportId && r.reportId.toUpperCase() === trackingId)) {
+      report = r;
       break;
     }
   }

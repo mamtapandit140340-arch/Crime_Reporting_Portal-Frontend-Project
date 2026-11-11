@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard – SafeCity</title>
+  <link rel="icon" type="image/png" href="../assets/images/safecity-logo.png">
+
+  <!-- Fonts: Public Sans & Source Serif 4 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3.3 & Bootstrap Icons 1.11.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Project Stylesheets -->
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../responsive.css">
+  <link rel="stylesheet" href="../css/client.css">
+</head>
+<body>
+
+<!-- Skip-to-main link for accessibility -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ══════════════════════════════════════════════
+     SITE NAVBAR
+     ══════════════════════════════════════════════ -->
+<nav class="site-navbar navbar navbar-expand-lg" aria-label="Main navigation">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">
+      <img src="../assets/images/safecity-logo.png" alt="SafeCity Logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">SafeCity</span>
+        <span class="brand-sub">Crime Reporting Portal</span>
+      </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNav" aria-controls="mainNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <div id="nav-links-container" class="ms-auto"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD HEADER / BANNER
+     ══════════════════════════════════════════════ -->
+<header class="dash-banner">
+  <div class="container">
+    <div class="dash-banner-inner">
+      <div>
+        <div class="dash-user-badge">
+          <i class="bi bi-shield-lock-fill"></i> Citizen Portal · ID: <span class="uid-val" id="dash-user-id">—</span>
+        </div>
+        <h1 class="dash-title">
+          Welcome back, <span id="dash-user-name">Citizen</span>!
+        </h1>
+        <p class="dash-subtitle">
+          Monitor your submitted incident reports, follow officer investigations, and stay informed.
+        </p>
+      </div>
+
+      <!-- Topbar Actions: Notifications Bell & Logout -->
+      <div class="dash-topbar-actions">
+        <!-- Notification Bell Button -->
+        <button type="button" class="btn-notif-bell" id="btn-open-notifications"
+                onclick="openNotificationsModal()" title="View Notifications" aria-label="Notifications">
+          <i class="bi bi-bell-fill"></i>
+          <span class="notif-badge-count" id="notif-count-badge">0</span>
+        </button>
+
+        <!-- Logout Button -->
+        <button class="btn-step-prev" onclick="Auth.logout('../')" style="background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.25);">
+          <i class="bi bi-box-arrow-right me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main-content" style="padding-bottom: 3rem;">
+  <div class="container">
+
+    <!-- ══════════════════════════════════════════════
+         SUMMARY STATISTIC CARDS (DYNAMIC)
+         ══════════════════════════════════════════════ -->
+    <section class="dash-kpi-grid" aria-label="Dashboard statistics">
+      <!-- Total Reports -->
+      <div class="dash-kpi-card">
+        <div class="dash-kpi-icon blue">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+        <div class="dash-kpi-body">
+          <div class="dash-kpi-val" id="kpi-total">0</div>
+          <div class="dash-kpi-label">Total Reports</div>
+        </div>
+      </div>
+
+      <!-- Pending Reports -->
+      <div class="dash-kpi-card">
+        <div class="dash-kpi-icon amber">
+          <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="dash-kpi-body">
+          <div class="dash-kpi-val" id="kpi-pending">0</div>
+          <div class="dash-kpi-label">Pending Review</div>
+        </div>
+      </div>
+
+      <!-- Under Investigation -->
+      <div class="dash-kpi-card">
+        <div class="dash-kpi-icon indigo">
+          <i class="bi bi-search"></i>
+        </div>
+        <div class="dash-kpi-body">
+          <div class="dash-kpi-val" id="kpi-investigation">0</div>
+          <div class="dash-kpi-label">Under Investigation</div>
+        </div>
+      </div>
+
+      <!-- Resolved Reports -->
+      <div class="dash-kpi-card">
+        <div class="dash-kpi-icon green">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div class="dash-kpi-body">
+          <div class="dash-kpi-val" id="kpi-resolved">0</div>
+          <div class="dash-kpi-label">Resolved / Closed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         QUICK ACTIONS
+         ══════════════════════════════════════════════ -->
+    <section class="mb-4" aria-label="Quick Actions">
+      <div class="dash-actions-row">
+        <a href="report-crime.html" class="dash-action-btn-card">
+          <i class="bi bi-file-earmark-plus text-primary"></i>
+          <div>
+            <div>Report a Crime</div>
+            <small class="text-muted" style="font-weight:400; font-size:0.75rem;">Submit a new verified incident report</small>
+          </div>
+        </a>
+
+        <a href="track-report.html" class="dash-action-btn-card">
+          <i class="bi bi-search text-info"></i>
+          <div>
+            <div>Track Report</div>
+            <small class="text-muted" style="font-weight:400; font-size:0.75rem;">Check status with tracking ID</small>
+          </div>
+        </a>
+
+        <a href="anonymous-tip.html" class="dash-action-btn-card">
+          <i class="bi bi-incognito text-success"></i>
+          <div>
+            <div>Anonymous Tip</div>
+            <small class="text-muted" style="font-weight:400; font-size:0.75rem;">Submit safe &amp; untraceable intelligence</small>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         RECENT REPORTS TABLE / EMPTY STATE
+         ══════════════════════════════════════════════ -->
+    <section class="dash-table-card" aria-label="Your submitted crime reports">
+      <div class="dash-table-header">
+        <h2 class="dash-table-title">
+          <i class="bi bi-journal-text text-primary"></i>
+          My Crime Reports
+          <span class="badge bg-secondary rounded-pill" id="table-reports-count">0</span>
+        </h2>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="dash-filter-row">
+          <div class="dash-search-input-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" id="dash-search" class="form-control"
+                   placeholder="Search ID, crime type, location…"
+                   aria-label="Search reports" oninput="filterUserReports()">
+          </div>
+
+          <select id="dash-status-filter" class="form-select" style="min-width: 170px;"
+                  aria-label="Filter reports by status" onchange="filterUserReports()">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Under Investigation">Under Investigation</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TABLE VIEW (Shown when user has reports) -->
+      <div class="table-responsive" id="dash-table-container">
+        <table class="dash-reports-table" aria-label="Submitted crime reports list">
+          <thead>
+            <tr>
+              <th scope="col">Report ID</th>
+              <th scope="col">Crime Category</th>
+              <th scope="col">Incident Date</th>
+              <th scope="col">Location</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Current Status</th>
+              <th scope="col" style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="dash-reports-tbody">
+            <!-- Populated dynamically by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- EMPTY STATE (Shown when user has NO reports) -->
+      <div class="dash-empty-state" id="dash-empty-state" style="display:none;">
+        <div class="dash-empty-icon">
+          <i class="bi bi-folder-x"></i>
+        </div>
+        <h3 class="dash-empty-title">You haven't submitted any crime reports yet.</h3>
+        <p class="dash-empty-desc">
+          When you report an incident through our secure portal, your submissions, status tracking, and police investigation updates will be displayed here in real time.
+        </p>
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+          <a href="report-crime.html" class="btn-primary-custom" style="text-decoration:none;">
+            <i class="bi bi-file-earmark-plus me-1"></i> Submit Your First Report
+          </a>
+          <a href="anonymous-tip.html" class="btn-teal-custom" style="text-decoration:none;">
+            <i class="bi bi-incognito me-1"></i> Send Anonymous Tip
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+  </div><!-- /.container -->
+</main>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: VIEW REPORT DETAILS & PROGRESS
+     ══════════════════════════════════════════════ -->
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-labelledby="reportDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:var(--radius-lg); border:1px solid var(--border);">
+      <div class="modal-header" style="background:#f8fafc; border-bottom:1.5px solid var(--border);">
+        <div>
+          <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--text-muted);">
+            Report Details
+          </span>
+          <h5 class="modal-title" id="reportDetailsModalLabel" style="font-weight:800; color:var(--primary); font-family:monospace;">
+            SC-00000000-0000
+          </h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4" id="report-modal-content">
+        <!-- Injected dynamically by showReportDetails() -->
+      </div>
+
+      <div class="modal-footer" style="background:#f8fafc; border-top:1px solid var(--border);">
+        <button type="button" class="btn-step-prev" data-bs-dismiss="modal">Close</button>
+        <a id="btn-modal-track-link" href="#" class="btn-primary-custom" style="text-decoration:none;">
+          <i class="bi bi-search me-1"></i> Open Full Track Page
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: USER NOTIFICATIONS
+     ══════════════════════════════════════════════ -->
+<div class="modal fade" id="notificationsModal" tabindex="-1" aria-labelledby="notificationsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg); border:1px solid var(--border);">
+      <div class="modal-header" style="background:#f8fafc; border-bottom:1.5px solid var(--border);">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-bell-fill text-primary"></i>
+          <h5 class="modal-title" id="notificationsModalLabel" style="font-weight:800; color:var(--primary);">
+            Notifications
+          </h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-0" id="notifications-modal-body" style="max-height: 400px; overflow-y: auto;">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div class="modal-footer justify-content-between" style="background:#f8fafc; border-top:1px solid var(--border);">
+        <button type="button" class="btn-step-prev" onclick="handleMarkAllRead()" style="font-size:0.8rem; padding:0.4rem 0.8rem;">
+          <i class="bi bi-check2-all me-1"></i> Mark All as Read
+        </button>
+        <button type="button" class="btn-step-prev" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand-block">
+        <img src="../assets/images/safecity-logo.png" alt="" height="32">
+        <div>
+          <div class="footer-brand-name">SafeCity</div>
+          <p class="footer-tagline">Crime reporting and anonymous tips for a safer community.</p>
+        </div>
+      </div>
+
+      <ul class="footer-links">
+        <li><a href="report-crime.html">Report Crime</a></li>
+        <li><a href="anonymous-tip.html">Anonymous Tip</a></li>
+        <li><a href="track-report.html">Track Report</a></li>
+        <li><a href="user-dashboard.html">Client Dashboard</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; <span id="current-year">2026</span> SafeCity · College project, not an official police or government website.
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Shared Application Scripts -->
+<script src="../main.js"></script>
+<script src="../js/validation.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/report.js"></script>
+
+<!-- ══════════════════════════════════════════════
+     CLIENT DASHBOARD JAVASCRIPT LOGIC
+     ══════════════════════════════════════════════ -->
+<script>
+  // Page authentication guard: only logged-in client users may access
+  guardPage('client', '../');
+
+  // Build the dynamic navbar for client pages
+  renderNavbar('../');
+
+  // Cache user's filtered reports for search/filter operations
+  var currentUserReports = [];
+
+  /**
+   * loadClientDashboard — initializes user information, statistics,
+   * reports table, and notifications.
+   */
+  function loadClientDashboard() {
+    var session = Auth.getSession();
+    if (!session) return;
+
+    // Display user profile info
+    var nameEl = document.getElementById('dash-user-name');
+    var idEl   = document.getElementById('dash-user-id');
+    if (nameEl) nameEl.textContent = session.name || 'Citizen';
+    if (idEl)   idEl.textContent   = session.userId || 'USER-CLIENT';
+
+    // Retrieve reports belonging strictly to the logged-in user
+    var currentUserId = session.userId;
+    var allReports = safeGetJSON('sc_reports');
+
+    // Filter reports by logged-in user's unique ID
+    currentUserReports = allReports.filter(function (r) {
+      return r.userId === currentUserId;
+    });
+
+    // Update KPI Summary Counts
+    updateKpiCounts(currentUserReports);
+
+    // Render Recent Reports Table or Empty State
+    renderReportsTable(currentUserReports);
+
+    // Update Notifications Badge
+    updateNotificationsBadge(currentUserId);
+  }
+
+  /**
+   * updateKpiCounts — computes summary statistics strictly from user's reports.
+   * @param {Array} reports - user's reports array
+   */
+  function updateKpiCounts(reports) {
+    var total    = reports.length;
+    var pending  = 0;
+    var active   = 0;
+    var resolved = 0;
+
+    reports.forEach(function (r) {
+      if (r.status === 'Pending') {
+        pending++;
+      } else if (r.status === 'Under Investigation' || r.status === 'Active' || r.status === 'Under Review') {
+        active++;
+      } else if (r.status === 'Resolved' || r.status === 'Closed') {
+        resolved++;
+      }
+    });
+
+    document.getElementById('kpi-total').textContent         = total;
+    document.getElementById('kpi-pending').textContent       = pending;
+    document.getElementById('kpi-investigation').textContent = active;
+    document.getElementById('kpi-resolved').textContent      = resolved;
+    document.getElementById('table-reports-count').textContent = total;
+  }
+
+  /**
+   * renderReportsTable — renders the table of user reports or shows empty state.
+   * @param {Array} reports - array of report objects
+   */
+  function renderReportsTable(reports) {
+    var tbody = document.getElementById('dash-reports-tbody');
+    var tableContainer = document.getElementById('dash-table-container');
+    var emptyState = document.getElementById('dash-empty-state');
+
+    if (!tbody || !tableContainer || !emptyState) return;
+
+    if (currentUserReports.length === 0) {
+      // User has submitted zero reports
+      tableContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    // User has reports
+    emptyState.style.display = 'none';
+    tableContainer.style.display = 'block';
+
+    if (reports.length === 0) {
+      // Search / filter returned 0 results
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">' +
+        '<i class="bi bi-search me-1"></i> No matching reports found for your filter criteria.</td></tr>';
+      return;
+    }
+
+    var html = '';
+    reports.forEach(function (r) {
+      var reportId = r.id || r.reportId || '—';
+      var category = r.type || r.category || 'Incident';
+      var dateStr  = formatDate(r.date);
+      var location = r.location || (r.district ? r.district : '—');
+      var priority = r.priority || 'Medium';
+      var status   = r.status || 'Pending';
+
+      var priorityBadge = priorityBadgeHTML(priority);
+      var statusBadge   = '<span class="badge-status badge-' + statusToClass(status) + '">' + status + '</span>';
+
+      html += '<tr>' +
+        '<td><span class="dash-report-id-cell" onclick="showReportDetails(\'' + reportId + '\')" title="Click to view details">' +
+          '<i class="bi bi-file-earmark-text me-1"></i>' + reportId +
+        '</span></td>' +
+        '<td><strong>' + escapeHTML(category) + '</strong></td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td style="max-width:220px;" class="text-truncate" title="' + escapeHTML(location) + '">' + escapeHTML(location) + '</td>' +
+        '<td>' + priorityBadge + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td style="text-align: right; white-space: nowrap;">' +
+          '<button type="button" class="btn-dash-action me-1" onclick="showReportDetails(\'' + reportId + '\')" title="View report details">' +
+            '<i class="bi bi-eye"></i> Details' +
+          '</button>' +
+          '<a href="track-report.html?id=' + encodeURIComponent(reportId) + '" class="btn-dash-action" title="Track timeline">' +
+            '<i class="bi bi-search"></i> Track' +
+          '</a>' +
+        '</td>' +
+      '</tr>';
+    });
+
+    tbody.innerHTML = html;
+  }
+
+  /**
+   * priorityBadgeHTML — renders priority badge.
+   */
+  function priorityBadgeHTML(priority) {
+    var cls = 'badge-medium';
+    if (priority === 'Critical') cls = 'badge-critical';
+    else if (priority === 'High') cls = 'badge-high';
+    else if (priority === 'Low') cls = 'badge-low';
+    return '<span class="badge-status ' + cls + '">' + (priority || 'Medium') + '</span>';
+  }
+
+  /**
+   * filterUserReports — filters user's reports by search query and status.
+   */
+  function filterUserReports() {
+    var search = (document.getElementById('dash-search').value || '').trim().toLowerCase();
+    var status = document.getElementById('dash-status-filter').value;
+
+    var filtered = currentUserReports.filter(function (r) {
+      var idMatch = (r.id && r.id.toLowerCase().includes(search)) ||
+                    (r.reportId && r.reportId.toLowerCase().includes(search));
+      var typeMatch = (r.type && r.type.toLowerCase().includes(search)) ||
+                      (r.category && r.category.toLowerCase().includes(search));
+      var locMatch  = r.location && r.location.toLowerCase().includes(search);
+
+      var matchesSearch = !search || idMatch || typeMatch || locMatch;
+      var matchesStatus = !status || r.status === status;
+
+      return matchesSearch && matchesStatus;
+    });
+
+    renderReportsTable(filtered);
+  }
+
+  /**
+   * showReportDetails — opens modal with full report details & progress timeline.
+   * @param {string} reportId - ID of report to view
+   */
+  function showReportDetails(reportId) {
+    var allReports = safeGetJSON('sc_reports');
+    var report = allReports.find(function (r) {
+      return r.id === reportId || r.reportId === reportId;
+    });
+
+    if (!report) {
+      showToast('Report details could not be found.', 'error');
+      return;
+    }
+
+    var titleEl = document.getElementById('reportDetailsModalLabel');
+    var bodyEl  = document.getElementById('report-modal-content');
+    var trackBtn = document.getElementById('btn-modal-track-link');
+
+    if (titleEl) titleEl.textContent = report.id || report.reportId;
+    if (trackBtn) trackBtn.href = 'track-report.html?id=' + encodeURIComponent(report.id || report.reportId);
+
+    // Compute timeline stage status
+    var stageMap = {
+      'Pending': 1,
+      'Under Review': 2,
+      'Under Investigation': 3,
+      'Active': 3,
+      'Resolved': 5,
+      'Closed': 5
+    };
+    var currentStage = stageMap[report.status] || 1;
+
+    var stages = [
+      { num: 1, label: 'Report Submitted', desc: report.submittedAt ? formatDateTime(report.submittedAt) : formatDate(report.date), icon: 'bi-send-check' },
+      { num: 2, label: 'Under Review', desc: currentStage >= 2 ? 'Incident reviewed by dispatch' : 'Pending review', icon: 'bi-eye' },
+      { num: 3, label: 'Investigation Active', desc: currentStage >= 3 ? (report.assignedOfficer ? 'Officer ' + report.assignedOfficer + ' assigned' : 'Investigation underway') : 'Awaiting assignment', icon: 'bi-search' },
+      { num: 4, label: 'Resolution & Findings', desc: currentStage >= 4 ? 'Findings recorded' : 'Investigation pending', icon: 'bi-file-text' },
+      { num: 5, label: 'Case Closed', desc: currentStage === 5 ? 'Case marked ' + report.status : 'Pending closure', icon: 'bi-shield-check' }
+    ];
+
+    var timelineHtml = '<div class="timeline mb-4">';
+    stages.forEach(function (st) {
+      var isDone    = st.num < currentStage;
+      var isCurrent = st.num === currentStage;
+      var cssClass  = isDone ? 'completed' : (isCurrent ? 'current' : '');
+
+      timelineHtml += '<div class="timeline-item ' + cssClass + '">' +
+        '<div class="timeline-dot"></div>' +
+        '<div class="timeline-title"><i class="bi ' + st.icon + ' me-1"></i>' + st.label + '</div>' +
+        '<div class="timeline-date">' + st.desc + '</div>' +
+      '</div>';
+    });
+    timelineHtml += '</div>';
+
+    // Build modal body HTML
+    var html =
+      '<div class="form-section-title">Investigation Progress</div>' +
+      timelineHtml +
+      '<div class="review-section">' +
+        '<div class="review-section-title">Incident Details</div>' +
+        '<div class="review-row"><span class="review-key">Report ID:</span><span class="review-val font-monospace fw-bold">' + (report.id || report.reportId) + '</span></div>' +
+        '<div class="review-row"><span class="review-key">Crime Type:</span><span class="review-val fw-bold">' + escapeHTML(report.type || report.category || 'Incident') + '</span></div>' +
+        '<div class="review-row"><span class="review-key">Date &amp; Time:</span><span class="review-val">' + formatDate(report.date) + (report.time ? ' at ' + report.time : '') + '</span></div>' +
+        '<div class="review-row"><span class="review-key">Current Status:</span><span class="review-val"><span class="badge-status badge-' + statusToClass(report.status) + '">' + report.status + '</span></span></div>' +
+        '<div class="review-row"><span class="review-key">Assigned Officer:</span><span class="review-val">' + (report.assignedOfficer ? escapeHTML(report.assignedOfficer) : '<span class="text-muted">Not assigned yet</span>') + '</span></div>' +
+        '<div class="review-row"><span class="review-key">Severity / Priority:</span><span class="review-val">' + (report.severity || '—') + ' (' + (report.priority || 'Medium') + ' Priority)</span></div>' +
+      '</div>' +
+      '<div class="review-section">' +
+        '<div class="review-section-title">Location Information</div>' +
+        '<div class="review-row"><span class="review-key">Address:</span><span class="review-val">' + escapeHTML(report.location || '—') + '</span></div>' +
+        '<div class="review-row"><span class="review-key">District / State:</span><span class="review-val">' + escapeHTML(report.district || '—') + (report.state ? ', ' + escapeHTML(report.state) : '') + '</span></div>' +
+        (report.landmark ? '<div class="review-row"><span class="review-key">Landmark:</span><span class="review-val">' + escapeHTML(report.landmark) + '</span></div>' : '') +
+      '</div>' +
+      '<div class="review-section">' +
+        '<div class="review-section-title">Description</div>' +
+        '<p style="font-size:0.88rem; color:var(--text); white-space:pre-wrap; margin:0;">' + escapeHTML(report.description || 'No description provided.') + '</p>' +
+      '</div>';
+
+    if (report.suspectName || report.suspectDesc) {
+      html += '<div class="review-section">' +
+        '<div class="review-section-title">Suspect Information</div>' +
+        (report.suspectName ? '<div class="review-row"><span class="review-key">Suspect Name:</span><span class="review-val">' + escapeHTML(report.suspectName) + '</span></div>' : '') +
+        (report.suspectDesc ? '<div class="review-row"><span class="review-key">Suspect Details:</span><span class="review-val">' + escapeHTML(report.suspectDesc) + '</span></div>' : '') +
+      '</div>';
+    }
+
+    bodyEl.innerHTML = html;
+
+    // Show Bootstrap modal
+    var modal = new bootstrap.Modal(document.getElementById('reportDetailsModal'));
+    modal.show();
+  }
+
+  /**
+   * updateNotificationsBadge — updates the unread badge count over the bell.
+   */
+  function updateNotificationsBadge(userId) {
+    if (!userId) return;
+    var notifs = getUserNotifications(userId);
+    var unreadCount = notifs.filter(function (n) { return !n.read; }).length;
+    var badge = document.getElementById('notif-count-badge');
+
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.classList.add('show');
+      } else {
+        badge.textContent = '0';
+        badge.classList.remove('show');
+      }
+    }
+  }
+
+  /**
+   * openNotificationsModal — opens user notifications list.
+   */
+  function openNotificationsModal() {
+    var session = Auth.getSession();
+    if (!session) return;
+
+    var notifs = getUserNotifications(session.userId);
+    var bodyEl = document.getElementById('notifications-modal-body');
+
+    if (!bodyEl) return;
+
+    if (notifs.length === 0) {
+      bodyEl.innerHTML = '<div class="text-center py-5 text-muted">' +
+        '<i class="bi bi-bell-slash fs-1 d-block mb-2"></i>' +
+        '<p class="mb-0">You have no notifications at this time.</p>' +
+      '</div>';
+    } else {
+      var html = '';
+      notifs.forEach(function (n) {
+        var iconCls = n.type || 'info';
+        var iconName = 'bi-info-circle';
+        if (n.type === 'success') iconName = 'bi-check-circle';
+        if (n.type === 'warning') iconName = 'bi-exclamation-triangle';
+
+        var unreadClass = !n.read ? ' unread' : '';
+        var timeStr = n.createdAt ? formatDateTime(n.createdAt) : 'Recently';
+
+        html += '<div class="notif-item' + unreadClass + '">' +
+          '<div class="notif-item-icon ' + iconCls + '">' +
+            '<i class="bi ' + iconName + '"></i>' +
+          '</div>' +
+          '<div class="notif-item-content">' +
+            '<div class="notif-item-title">' + escapeHTML(n.title) + '</div>' +
+            '<div class="notif-item-msg">' + escapeHTML(n.message) + '</div>' +
+            '<div class="notif-item-time"><i class="bi bi-clock me-1"></i>' + timeStr + '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      bodyEl.innerHTML = html;
+    }
+
+    var modal = new bootstrap.Modal(document.getElementById('notificationsModal'));
+    modal.show();
+  }
+
+  /**
+   * handleMarkAllRead — marks notifications as read and updates badge.
+   */
+  function handleMarkAllRead() {
+    var session = Auth.getSession();
+    if (!session) return;
+    markNotificationsAsRead(session.userId);
+    updateNotificationsBadge(session.userId);
+    openNotificationsModal(); // refresh view
+    showToast('All notifications marked as read.', 'success');
+  }
+
+  // ══════════════════════════════════════════════
+  // EVENT LISTENERS & REAL-TIME SYNCHRONIZATION
+  // ══════════════════════════════════════════════
+
+  // Load dashboard when DOM is ready
+  document.addEventListener('DOMContentLoaded', function () {
+    loadClientDashboard();
+  });
+
+  // Real-time synchronization across browser tabs (when reports or notifications change)
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'sc_reports' || e.key === 'sc_notifications') {
+      loadClientDashboard();
+    }
+  });
+
+  // Refresh dashboard when user switches back to this browser tab
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) {
+      loadClientDashboard();
+    }
+  });
+
+  // Refresh dashboard when page is shown via browser navigation
+  window.addEventListener('pageshow', function () {
+    loadClientDashboard();
+  });
+</script>
+
+</body>
+</html>

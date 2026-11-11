@@ -30,35 +30,44 @@ var Auth = {
 
     // Admin credential check
     if (email === 'admin@safecity.gov' && password === 'admin123') {
-      var session = { role: 'admin', name: 'Administrator', email: email };
+      var session = { role: 'admin', userId: 'ADMIN-001', name: 'Administrator', email: email };
       sessionStorage.setItem('sc_session', JSON.stringify(session));
       // Keep backward-compat key so existing admin.js guard still works
       localStorage.setItem('sc_admin_logged_in', 'true');
       localStorage.setItem('sc_admin_name', 'Administrator');
-      return { ok: true, role: 'admin' };
+      return { ok: true, role: 'admin', session: session };
     }
 
     // Demo user credential check
     if (email === 'user@safecity.gov' && password === 'user1234') {
-      var session = { role: 'user', name: 'Demo User', email: email };
+      var session = { role: 'user', userId: 'USER-101', name: 'Demo User', email: email };
       sessionStorage.setItem('sc_session', JSON.stringify(session));
       localStorage.setItem('sc_client_logged_in', 'true');
       localStorage.setItem('sc_client_name', 'Demo User');
-      return { ok: true, role: 'user' };
+      localStorage.setItem('sc_client_userId', 'USER-101');
+      return { ok: true, role: 'user', session: session };
     }
 
     // Check registered users stored in localStorage
     var users = JSON.parse(localStorage.getItem('sc_users') || '[]');
-    var found = users.find(function (u) {
-      return u.email.toLowerCase() === email && u.password === password;
+    var foundIndex = users.findIndex(function (u) {
+      return u.email && u.email.toLowerCase() === email && u.password === password;
     });
 
-    if (found) {
-      var session = { role: 'user', name: found.name, email: found.email };
+    if (foundIndex !== -1) {
+      var found = users[foundIndex];
+      // Ensure the registered user has a unique userId
+      if (!found.userId) {
+        found.userId = 'USER-' + Math.floor(1000 + Math.random() * 9000);
+        users[foundIndex] = found;
+        localStorage.setItem('sc_users', JSON.stringify(users));
+      }
+      var session = { role: 'user', userId: found.userId, name: found.name, email: found.email };
       sessionStorage.setItem('sc_session', JSON.stringify(session));
       localStorage.setItem('sc_client_logged_in', 'true');
       localStorage.setItem('sc_client_name', found.name);
-      return { ok: true, role: 'user' };
+      localStorage.setItem('sc_client_userId', found.userId);
+      return { ok: true, role: 'user', session: session };
     }
 
     return { ok: false, message: 'Invalid email or password. Please try again.' };
@@ -71,10 +80,12 @@ var Auth = {
   logout: function (basePath) {
     basePath = basePath || '';
     sessionStorage.removeItem('sc_session');
+    sessionStorage.removeItem('sc_intended');
     localStorage.removeItem('sc_admin_logged_in');
     localStorage.removeItem('sc_admin_name');
     localStorage.removeItem('sc_client_logged_in');
     localStorage.removeItem('sc_client_name');
+    localStorage.removeItem('sc_client_userId');
     window.location.href = basePath + 'client/login.html';
   },
 
@@ -85,6 +96,22 @@ var Auth = {
     var raw = sessionStorage.getItem('sc_session');
     if (!raw) return null;
     try { return JSON.parse(raw); } catch (e) { return null; }
+  },
+
+  /* ---- getUserId --------------------------------------------
+     Returns the unique ID of the currently logged-in user or empty string.
+  ---------------------------------------------------------------- */
+  getUserId: function () {
+    var s = this.getSession();
+    return s && s.userId ? s.userId : '';
+  },
+
+  /* ---- getEmail ---------------------------------------------
+     Returns the email of the currently logged-in user or empty string.
+  ---------------------------------------------------------------- */
+  getEmail: function () {
+    var s = this.getSession();
+    return s && s.email ? s.email : '';
   },
 
   /* ---- getRole ----------------------------------------------
@@ -130,7 +157,8 @@ function renderNavbar(basePath) {
   if (!container) return; // Safety: element must exist in HTML
 
   var role     = Auth.getRole();
-  var name     = escapeHTML(Auth.getName()); // escapeHTML() lives in main.js
+  var rawName  = Auth.getName();
+  var name     = typeof escapeHTML === 'function' ? escapeHTML(rawName) : rawName;
   var html     = '';
 
   // Which page are we on? e.g. "index.html".
@@ -163,11 +191,12 @@ function renderNavbar(basePath) {
   // ── USER (logged in as regular user) ─────────────────────
   else if (role === 'user') {
     html += navLink(basePath + 'index.html',                 'Home',          'bi-house-fill',       'index.html');
+    html += navLink(basePath + 'client/user-dashboard.html', 'Dashboard',     'bi-speedometer2',     'user-dashboard.html');
     html += navLink(basePath + 'client/report-crime.html',   'Report Crime',  'bi-file-earmark-plus','report-crime.html');
     html += navLink(basePath + 'client/track-report.html',   'Track Report',  'bi-search',           'track-report.html');
     html += navLink(basePath + 'client/anonymous-tip.html',  'Anonymous Tip', 'bi-incognito',        'anonymous-tip.html');
     html += '<div class="nav-auth-btns">';
-    html +=   '<span class="navbar-user-chip"><i class="bi bi-person-fill me-1"></i>' + name + '</span>';
+    html +=   '<a href="' + basePath + 'client/user-dashboard.html" class="navbar-user-chip" title="Go to Dashboard"><i class="bi bi-person-fill me-1"></i>' + name + '</a>';
     html +=   '<button class="btn-nav-logout" onclick="Auth.logout(\'' + basePath + '\')">'
             + '<i class="bi bi-box-arrow-right me-1"></i>Logout</button>';
     html += '</div>';
@@ -266,7 +295,8 @@ function handleLogin(event) {
       var userName = Auth.getName();
       showToast('Welcome back, ' + userName + '!', 'success', 1800);
       setTimeout(function () {
-        window.location.href = dest || '../index.html';
+        // Redirect to User Dashboard upon client login
+        window.location.href = dest || 'user-dashboard.html';
       }, 1800);
     }
   } else {
@@ -322,8 +352,20 @@ function handleRegister(event) {
     return;
   }
 
-  // Save new user
-  users.push({ name: name, email: email, phone: phone, password: password });
+  // Save new user with a unique user ID
+  var userId = 'USER-' + Math.floor(1000 + Math.random() * 9000);
+  while (users.some(function (u) { return u.userId === userId; })) {
+    userId = 'USER-' + Math.floor(1000 + Math.random() * 9000);
+  }
+
+  users.push({
+    userId: userId,
+    name: name,
+    email: email,
+    phone: phone,
+    password: password,
+    createdAt: new Date().toISOString()
+  });
   localStorage.setItem('sc_users', JSON.stringify(users));
 
   showToast('Account created! You can now log in.', 'success');
